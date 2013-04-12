@@ -1,6 +1,12 @@
 package cn.wang.yin.bean;
 
+/**
+ * ¹ş¹ş¹ş¹ş
+ * @author ruoshui
+ *	ÎÒÈ¥
+ */
 public class DebuggingInformation {
+	//ÕâÀï
 	private int id;
 	private String message;
 	private String exceptiontype;
@@ -10,6 +16,10 @@ public class DebuggingInformation {
 	public int getId() {
 		return id;
 	}
+	/**
+	 * àÅ
+	 * @param id
+	 */
 	public void setId(int id) {
 		this.id = id;
 	}
@@ -43,5 +53,5 @@ public class DebuggingInformation {
 	public void setPruducttime(String pruducttime) {
 		this.pruducttime = pruducttime;
 	}
-	//¹ş¹ş¹ş¹ş
+	
 }
