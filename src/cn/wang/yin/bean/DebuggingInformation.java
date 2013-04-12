@@ -43,6 +43,4 @@ public class DebuggingInformation {
 	public void setPruducttime(String pruducttime) {
 		this.pruducttime = pruducttime;
 	}
-	
-	
 }
