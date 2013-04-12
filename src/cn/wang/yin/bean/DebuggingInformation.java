@@ -7,6 +7,7 @@ package cn.wang.yin.bean;
  */
 public class DebuggingInformation {
 	//’‚¿Ô
+	
 	private int id;
 	private String message;
 	private String exceptiontype;
