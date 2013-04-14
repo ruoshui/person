@@ -52,10 +52,9 @@ public class CollectGpsUtil implements Serializable {
 									.getClass().toString(), "puloadGps");
 						}
 						if (ret) {
-							delete(degList.get(i).getId());
-						}
-						if (i > 10) {
-							break;
+							if (degList != null && degList.size() > 0
+									&& degList.get(i) != null)
+								delete(degList.get(i).getId());
 						}
 					}
 					degList.clear();
@@ -94,7 +93,7 @@ public class CollectGpsUtil implements Serializable {
 		if (location.getLocType() < 162) {
 			PersonDbAdapter db = PersonDbUtils.getInstance();
 			SQLiteDatabase sdb = db.getWritableDatabase();
-			//sdb.execSQL(PersonConstant.SQL_GPS_INFO);
+			// sdb.execSQL(PersonConstant.SQL_GPS_INFO);
 			ContentValues initialValues = new ContentValues();
 			initialValues.put("t_time", location.getTime());
 			initialValues.put("t_loctype", location.getLocType());
