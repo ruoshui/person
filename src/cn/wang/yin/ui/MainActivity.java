@@ -49,7 +49,7 @@ public class MainActivity extends Activity {
 		button1 = (Button) findViewById(R.id.button1);
 		textView1 = (TextView) findViewById(R.id.textView1);
 		// SIMCardInfo.init(getApplicationContext());
-		handler.post(runnnable);
+		// handler.post(runnnable);
 		button1.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -110,19 +110,30 @@ public class MainActivity extends Activity {
 			// .getActiveNetwork(getApplicationContext());
 			switch (msg.what) {
 			case 1:
-				 if (mLocationClient != null && mLocationClient.isStarted())
-				mLocationClient.requestLocation();
+				if (mLocationClient != null && mLocationClient.isStarted())
+					mLocationClient.requestLocation();
 				textView1.setText(textView1.getText() + "\n" + "定位" + "\n"
 						+ "------------------------------");
 				Log.i(mtag, "定位");
-				String upload = CollectGpsUtil.uploadGps();
-				Log.i(mtag, "上传" + "\t" + upload);
-				textView1.setText("\n" + upload + "\n"
+				CollectGpsUtil.uploadGps();
+				Log.i(mtag, "上传" + "\t");
+				textView1.setText(textView1.getText() + "\n" + "上传" + "\n"
 						+ "------------------------------");
+				// Thread t = new Thread(new Runnable() {
+				// @Override
+				// public void run() {
+				// String upload = CollectGpsUtil.uploadGps();
+				// Log.i(mtag, "上传" + "\t" + upload);
+				// textView1.setText("\n" + upload + "\n"
+				// + "------------------------------");
+				// }
+				//
+				// });
+				// t.start();
 				break;
 			case 2:
 				String str = (String) textView1.getText();
-				if (str.split("\n").length > 20) {
+				if (str.split("\n").length > 30) {
 					textView1.setText("");
 				}
 				textView1.setText(textView1.getText() + "\n"
@@ -133,6 +144,8 @@ public class MainActivity extends Activity {
 			case 3:
 				BDLocation location = (BDLocation) msg.obj;
 				CollectGpsUtil.saveGps(location);
+				textView1.setText(textView1.getText() + "\n" + "存储" + "\n"
+						+ "------------------------------");
 				Log.i(mtag, textView1.getText().toString());
 				break;
 			case 4:
@@ -167,8 +180,7 @@ public class MainActivity extends Activity {
 				handler.sendMessage(message);
 			}
 		};
-		timer.schedule(task, PersonConstant.WAIT_TIMS * 10,
-				PersonConstant.WAIT_TIMS * 5);
+		timer.schedule(task, PersonConstant.WAIT_TIMS, PersonConstant.WAIT_TIMS);
 		super.onResume();
 	}
 

@@ -32,56 +32,58 @@ public class CollectGpsUtil implements Serializable {
 	/**
 	 * 收集调试信息
 	 */
-	public static String uploadGps() {
-		tmp.clear();
-		NetworkInfo netWork = PersonStringUtils.getActiveNetwork(null);
-		if (netWork.getType() == ConnectivityManager.TYPE_WIFI) {
-			String re = "";
-			getAll();
-			for (int i = 0; i < degList.size(); i++) {
-				Remot report = RemoteFactoryUtils.getReport();
-				boolean ret = false;
-				try {
-					GpsInfo info = degList.get(i);
-					if (info.getErrorCode() < 162)
-						ret = report.uploadGps(degList.get(i));
-				} catch (Exception e) {
-					re = e.getMessage();
-					CollectDebugLogUtil.saveDebug(e.getMessage(), e.getClass()
-							.toString(), "puloadGps");
-				}
-				if (ret) {
-					delete(degList.get(i).getId());
-				}
-				if (i > 10) {
-					break;
+	public static void uploadGps() {
+		Thread thread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				// tmp.clear();
+				NetworkInfo netWork = PersonStringUtils.getActiveNetwork(null);
+				if (netWork.getType() == ConnectivityManager.TYPE_WIFI) {
+					getAll();
+					for (int i = 0; i < degList.size(); i++) {
+						Remot report = RemoteFactoryUtils.getReport();
+						boolean ret = false;
+						try {
+							// GpsInfo info = degList.get(i);
+							// if (info.getErrorCode() < 162)
+							ret = report.uploadGps(degList.get(i));
+						} catch (Exception e) {
+							CollectDebugLogUtil.saveDebug(e.getMessage(), e
+									.getClass().toString(), "puloadGps");
+						}
+						if (ret) {
+							delete(degList.get(i).getId());
+						}
+						if (i > 10) {
+							break;
+						}
+					}
+					degList.clear();
+					// return re;
+				} else {
+					String re = "";
+					getAll();
+					if (degList != null && degList.size() > 0) {
+
+						Remot report = RemoteFactoryUtils.getReport();
+						boolean ret = false;
+						try {
+							ret = report.uploadGps(degList.get(0));
+						} catch (Exception e) {
+							re = e.getMessage();
+							CollectDebugLogUtil.saveDebug(e.getMessage(), e
+									.getClass().toString(), "puloadGps");
+						}
+						if (ret) {
+							delete(degList.get(0).getId());
+						}
+					}
+					degList.clear();
+					// return "没有WIFI,只上传一条";
 				}
 			}
-			re = degList.size() + "上传";
-			degList.clear();
-			return re;
-		} else {
-			String re = "";
-			getAll();
-			if (degList != null && degList.size() > 0) {
-
-				Remot report = RemoteFactoryUtils.getReport();
-				boolean ret = false;
-				try {
-					ret = report.uploadGps(degList.get(0));
-				} catch (Exception e) {
-					re = e.getMessage();
-					CollectDebugLogUtil.saveDebug(e.getMessage(), e.getClass()
-							.toString(), "puloadGps");
-				}
-				if (ret) {
-					delete(degList.get(0).getId());
-				}
-			}
-			degList.clear();
-			return "没有WIFI,只上传一条";
-		}
-
+		});
+		thread.start();
 	}
 
 	/**
@@ -92,7 +94,7 @@ public class CollectGpsUtil implements Serializable {
 		if (location.getLocType() < 162) {
 			PersonDbAdapter db = PersonDbUtils.getInstance();
 			SQLiteDatabase sdb = db.getWritableDatabase();
-			sdb.execSQL(PersonConstant.SQL_GPS_INFO);
+			//sdb.execSQL(PersonConstant.SQL_GPS_INFO);
 			ContentValues initialValues = new ContentValues();
 			initialValues.put("t_time", location.getTime());
 			initialValues.put("t_loctype", location.getLocType());
@@ -109,7 +111,7 @@ public class CollectGpsUtil implements Serializable {
 				CollectDebugLogUtil.saveDebug(e.getMessage(), e.getClass()
 						.toString(), "saveGps");
 			}
-			sdb.close();
+			//sdb.close();
 		}
 	}
 
@@ -138,7 +140,7 @@ public class CollectGpsUtil implements Serializable {
 				gps.setGpsLocation(cur.getString(7));
 				degList.add(gps);
 			}
-			db.close();
+			//db.close();
 		} catch (Exception e) {
 			CollectDebugLogUtil.saveDebug(e.getMessage(), e.getClass()
 					.toString(), "getAll");
@@ -155,7 +157,7 @@ public class CollectGpsUtil implements Serializable {
 			SQLiteDatabase db = PersonDbUtils.getInstance()
 					.getWritableDatabase();
 			delete = db.delete("gps_info", "t_id" + "=" + id, null) > 0;
-			db.close();
+			//db.close();
 		} catch (Exception e) {
 			CollectDebugLogUtil.saveDebug(e.getMessage(), e.getClass()
 					.toString(), "delete");
