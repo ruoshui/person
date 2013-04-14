@@ -10,8 +10,7 @@ import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-
-import com.wang.yin.personal.R;
+import cn.wang.yin.personal.R;
 
 public class PersonStringUtils extends Activity implements Serializable {
 	private static SimpleDateFormat formatter = null;

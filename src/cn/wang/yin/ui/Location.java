@@ -3,14 +3,12 @@ package cn.wang.yin.ui;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
-
-import cn.wang.yin.personal.service.listenner.LocationProvider;
+import cn.wang.yin.personal.R;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
-import com.wang.yin.personal.R;
 
 public class Location extends Activity {
 	public TextView textView1;

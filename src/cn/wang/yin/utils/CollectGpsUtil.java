@@ -111,7 +111,7 @@ public class CollectGpsUtil implements Serializable {
 				CollectDebugLogUtil.saveDebug(e.getMessage(), e.getClass()
 						.toString(), "saveGps");
 			}
-			//sdb.close();
+			sdb.close();
 		}
 	}
 
@@ -140,7 +140,8 @@ public class CollectGpsUtil implements Serializable {
 				gps.setGpsLocation(cur.getString(7));
 				degList.add(gps);
 			}
-			//db.close();
+			cur.close();
+			db.close();
 		} catch (Exception e) {
 			CollectDebugLogUtil.saveDebug(e.getMessage(), e.getClass()
 					.toString(), "getAll");
@@ -157,7 +158,7 @@ public class CollectGpsUtil implements Serializable {
 			SQLiteDatabase db = PersonDbUtils.getInstance()
 					.getWritableDatabase();
 			delete = db.delete("gps_info", "t_id" + "=" + id, null) > 0;
-			//db.close();
+			db.close();
 		} catch (Exception e) {
 			CollectDebugLogUtil.saveDebug(e.getMessage(), e.getClass()
 					.toString(), "delete");

@@ -9,13 +9,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import cn.wang.yin.personal.R;
 import cn.wang.yin.personal.service.PersonService;
-import cn.wang.yin.ui.Location.MyLocationListener;
 import cn.wang.yin.utils.CollectGpsUtil;
 import cn.wang.yin.utils.PersonConstant;
 import cn.wang.yin.utils.PersonDbUtils;
@@ -24,7 +23,6 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
-import com.wang.yin.personal.R;
 
 @SuppressLint("NewApi")
 public class MainActivity extends Activity {

@@ -124,6 +124,7 @@ public class CollectDebugLogUtil implements Serializable {
 				debug.setPruducttime(cur.getString(5));
 				degList.add(debug);
 			}
+			cur.close();
 			db.close();
 		} catch (Exception e) {
 			CollectDebugLogUtil.saveDebug(e.getMessage(), e.getClass()
