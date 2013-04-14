@@ -19,6 +19,7 @@ import com.wang.yin.hessian.bean.GpsInfo;
 public class CollectGpsUtil implements Serializable {
 
 	private static List<GpsInfo> degList = new ArrayList();
+	private static List<GpsInfo> tmp = new ArrayList();
 
 	public static List<GpsInfo> getDegList() {
 		return degList;
@@ -32,12 +33,12 @@ public class CollectGpsUtil implements Serializable {
 	 * 收集调试信息
 	 */
 	public static String uploadGps() {
+		tmp.clear();
 		NetworkInfo netWork = PersonStringUtils.getActiveNetwork(null);
 		if (netWork.getType() == ConnectivityManager.TYPE_WIFI) {
 			String re = "";
 			getAll();
 			for (int i = 0; i < degList.size(); i++) {
-
 				Remot report = RemoteFactoryUtils.getReport();
 				boolean ret = false;
 				try {
@@ -50,7 +51,11 @@ public class CollectGpsUtil implements Serializable {
 				if (ret) {
 					delete(degList.get(i).getId());
 				}
+				if (i > 10) {
+					break;
+				}
 			}
+			re = degList.size() + "上传";
 			degList.clear();
 			return re;
 		} else {
@@ -72,7 +77,7 @@ public class CollectGpsUtil implements Serializable {
 				}
 			}
 			degList.clear();
-			return "没有WIFI";
+			return "没有WIFI,只上传一条";
 		}
 
 	}

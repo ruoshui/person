@@ -83,7 +83,7 @@ public class PersonService extends IntentService {
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
-
+		// MainActivity.
 	}
 
 	// public void location() {
