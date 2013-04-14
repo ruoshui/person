@@ -40,7 +40,7 @@ public class PersonConstant {
 	public static final String REMOTE_URL = "http://10.851008988.duapp.com/hapi";
 	// public static final String REMOTE_URL
 	// ="http://192.168.2.185:8080/th/hapi";
-	public static final long WAIT_TIMS = 1000 * 60 * 3;
+	public static final long WAIT_TIMS = 1000 * 3;
 
 	public static final String PREFERENCES_FILE_NAME = "personal_preferences";
 

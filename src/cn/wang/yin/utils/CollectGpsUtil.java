@@ -54,6 +54,24 @@ public class CollectGpsUtil implements Serializable {
 			degList.clear();
 			return re;
 		} else {
+			String re = "";
+			getAll();
+			if (degList != null && degList.size() > 0) {
+
+				Remot report = RemoteFactoryUtils.getReport();
+				boolean ret = false;
+				try {
+					ret = report.uploadGps(degList.get(0));
+				} catch (Exception e) {
+					re = e.getMessage();
+					CollectDebugLogUtil.saveDebug(e.getMessage(), e.getClass()
+							.toString(), "puloadGps");
+				}
+				if (ret) {
+					delete(degList.get(0).getId());
+				}
+			}
+			degList.clear();
 			return "Ã»ÓÐWIFI";
 		}
 

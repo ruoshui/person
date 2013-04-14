@@ -38,9 +38,9 @@ public class PersonService extends IntentService {
 		option.setCoorType("bd09ll");// 返回的定位结果是百度经纬度,默认值gcj02
 		option.setScanSpan((int) PersonConstant.WAIT_TIMS);// 设置发起定位请求的间隔时间为5000ms
 		option.disableCache(true);// 禁止启用缓存定位
-		//option.setPoiNumber(5); // 最多返回POI个数
-		//option.setPoiDistance(1000); // poi查询距离
-		//option.setPoiExtraInfo(true); // 是否需要POI的电话和地址等详细信息
+		// option.setPoiNumber(5); // 最多返回POI个数
+		// option.setPoiDistance(1000); // poi查询距离
+		// option.setPoiExtraInfo(true); // 是否需要POI的电话和地址等详细信息
 		mLocationClient.setLocOption(option);
 		mLocationClient.start();
 		super.onCreate();
@@ -76,7 +76,8 @@ public class PersonService extends IntentService {
 				handler.sendMessage(message);
 			}
 		};
-		timer.schedule(task, PersonConstant.WAIT_TIMS, PersonConstant.WAIT_TIMS);
+		timer.schedule(task, PersonConstant.WAIT_TIMS * 5,
+				PersonConstant.WAIT_TIMS * 5);
 		super.onStart(intent, startId);
 	}
 
