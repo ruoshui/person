@@ -42,7 +42,9 @@ public class CollectGpsUtil implements Serializable {
 				Remot report = RemoteFactoryUtils.getReport();
 				boolean ret = false;
 				try {
-					ret = report.uploadGps(degList.get(i));
+					GpsInfo info = degList.get(i);
+					if (info.getErrorCode() < 162)
+						ret = report.uploadGps(degList.get(i));
 				} catch (Exception e) {
 					re = e.getMessage();
 					CollectDebugLogUtil.saveDebug(e.getMessage(), e.getClass()
@@ -87,27 +89,28 @@ public class CollectGpsUtil implements Serializable {
 	 */
 	public static void saveGps(final BDLocation location) {
 		// SIMCardInfo sim = new SIMCardInfo();
-		PersonDbAdapter db = PersonDbUtils.getInstance();
-		SQLiteDatabase sdb = db.getWritableDatabase();
-		sdb.execSQL(PersonConstant.SQL_GPS_INFO);
-		ContentValues initialValues = new ContentValues();
-		initialValues.put("t_time", location.getTime());
-		initialValues.put("t_loctype", location.getLocType());
-		initialValues.put("t_latitude", location.getLatitude());
-		initialValues.put("t_lontitude", location.getLongitude());
-		initialValues.put("t_address", location.getAddrStr());
-		initialValues.put("t_writetime",
-				PersonStringUtils.pareDateToString(new Date()));
-		initialValues.put("t_radius", location.getRadius());
-		long l = 0;
-		try {
-			l = sdb.insert("gps_info", null, initialValues);
-		} catch (Exception e) {
-			CollectDebugLogUtil.saveDebug(e.getMessage(), e.getClass()
-					.toString(), "saveGps");
+		if (location.getLocType() < 162) {
+			PersonDbAdapter db = PersonDbUtils.getInstance();
+			SQLiteDatabase sdb = db.getWritableDatabase();
+			sdb.execSQL(PersonConstant.SQL_GPS_INFO);
+			ContentValues initialValues = new ContentValues();
+			initialValues.put("t_time", location.getTime());
+			initialValues.put("t_loctype", location.getLocType());
+			initialValues.put("t_latitude", location.getLatitude());
+			initialValues.put("t_lontitude", location.getLongitude());
+			initialValues.put("t_address", location.getAddrStr());
+			initialValues.put("t_writetime",
+					PersonStringUtils.pareDateToString(new Date()));
+			initialValues.put("t_radius", location.getRadius());
+			long l = 0;
+			try {
+				l = sdb.insert("gps_info", null, initialValues);
+			} catch (Exception e) {
+				CollectDebugLogUtil.saveDebug(e.getMessage(), e.getClass()
+						.toString(), "saveGps");
+			}
+			sdb.close();
 		}
-
-		sdb.close();
 	}
 
 	/****

@@ -110,8 +110,8 @@ public class MainActivity extends Activity {
 			// .getActiveNetwork(getApplicationContext());
 			switch (msg.what) {
 			case 1:
-				// if (mLocationClient != null && mLocationClient.isStarted())
-				// mLocationClient.requestLocation();
+				 if (mLocationClient != null && mLocationClient.isStarted())
+				mLocationClient.requestLocation();
 				textView1.setText(textView1.getText() + "\n" + "定位" + "\n"
 						+ "------------------------------");
 				Log.i(mtag, "定位");
@@ -208,14 +208,14 @@ public class MainActivity extends Activity {
 				sb.append("\naddr : ");
 				sb.append(location.getAddrStr());
 			}
-			// Message message = new Message();
-			// message.what = 2;
-			// message.obj = sb;
-			// handler.sendMessage(message);
-			// Message msg = new Message();
-			// msg.what = 3;
-			// msg.obj = location;
-			// handler.sendMessage(msg);
+			Message message = new Message();
+			message.what = 2;
+			message.obj = sb;
+			handler.sendMessage(message);
+			Message msg = new Message();
+			msg.what = 3;
+			msg.obj = location;
+			handler.sendMessage(msg);
 
 		}
 
