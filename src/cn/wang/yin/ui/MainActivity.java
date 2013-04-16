@@ -48,19 +48,19 @@ public class MainActivity extends Activity {
 		PersonDbUtils.init(getApplicationContext());
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		button1 = (Button) findViewById(R.id.button1);
+	//	button1 = (Button) findViewById(R.id.button1);
 		textView1 = (TextView) findViewById(R.id.textView1);
 		// SIMCardInfo.init(getApplicationContext());
 		// handler.post(runnnable);
-		button1.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(getApplicationContext(),
-						PersonService.class);
-				stopService(intent);
-				textView1.setText(textView1.getText() + "\n" + "停止服务");
-			}
-		});
+//		button1.setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				Intent intent = new Intent(getApplicationContext(),
+//						PersonService.class);
+//				stopService(intent);
+//				textView1.setText(textView1.getText() + "\n" + "停止服务");
+//			}
+//		});
 		// float fv =
 		// Float.valueOf(android.os.Build.VERSION.RELEASE.substring(0,
 		// 3).trim());
