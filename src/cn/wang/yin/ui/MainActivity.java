@@ -40,6 +40,7 @@ public class MainActivity extends Activity {
 	public LocationClient mLocationClient = null;
 	public BDLocationListener myListener = new MyLocationListener();
 	TelephonyManager telephonyManager;
+
 	// private static List<String> listTmp = new ArrayList();
 
 	@Override
@@ -87,8 +88,9 @@ public class MainActivity extends Activity {
 		option.setPoiDistance(1000); // poi查询距离
 		option.setPoiExtraInfo(true); // 是否需要POI的电话和地址等详细信息
 		mLocationClient.setLocOption(option);
-		System.out.println(android.os.Build.VERSION.RELEASE);
 		
+		System.out.println(android.os.Build.VERSION.RELEASE);
+
 		SIMCardInfo sci = new SIMCardInfo(getApplicationContext());
 		textView1.setText(textView1.getText() + "\n" + "手机号码："
 				+ sci.getNativePhoneNumber() + "\n" + sci.getProvidersName());
@@ -130,9 +132,9 @@ public class MainActivity extends Activity {
 						+ "------------------------------");
 				Log.i(mtag, "定位");
 				CollectGpsUtil.uploadGps();
-				Log.i(mtag, "上传" + "\t");
-				textView1.setText(textView1.getText() + "\n" + "上传" + "\n"
-						+ "------------------------------");
+				// Log.i(mtag, "上传" + "\t");
+				// textView1.setText(textView1.getText() + "\n" + "上传" + "\n"
+				// + "------------------------------");
 				break;
 			case 2:
 				String str = (String) textView1.getText();

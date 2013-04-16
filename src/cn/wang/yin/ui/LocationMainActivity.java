@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import cn.wang.yin.personal.R;
 import cn.wang.yin.personal.service.PersonService;
+import cn.wang.yin.ui.MainActivity.MyLocationListener;
 import cn.wang.yin.utils.CollectGpsUtil;
 import cn.wang.yin.utils.PersonConstant;
 import cn.wang.yin.utils.PersonDbUtils;
@@ -29,7 +30,7 @@ import com.baidu.location.LocationClientOption;
 
 @SuppressLint("NewApi")
 public class LocationMainActivity extends Activity {
-	public String mtag = "MainActivity";
+	public static String mtag = "MainActivity";
 	Button button1;
 	public static TextView textView1;
 	int i = 0;
@@ -37,7 +38,11 @@ public class LocationMainActivity extends Activity {
 	public static final int SUCCESS = 1;
 	final Timer timer = new Timer();
 	TimerTask task;
+	Timer uploadTimer = new Timer();
+	TimerTask uploadTask;
 
+	public static LocationClient mLocationClient = null;
+	public BDLocationListener myListener = new MyLocationListener();
 	TelephonyManager telephonyManager;
 
 	// private static List<String> listTmp = new ArrayList();
@@ -63,27 +68,35 @@ public class LocationMainActivity extends Activity {
 
 		System.out.println(android.os.Build.VERSION.RELEASE);
 
-		SIMCardInfo sci = new SIMCardInfo(getApplicationContext());
-		textView1.setText(textView1.getText() + "\n" + "手机号码："
-				+ sci.getNativePhoneNumber() + "\n" + sci.getProvidersName());
-		telephonyManager = (TelephonyManager) getApplicationContext()
-				.getSystemService(Context.TELEPHONY_SERVICE);
-		StringBuilder sb = new StringBuilder();
-		sb.append(telephonyManager.getDeviceId() + "\n");
-		sb.append(telephonyManager.getCallState() + "\n");
-		sb.append(telephonyManager.getDeviceSoftwareVersion() + "\n");
-		sb.append(telephonyManager.getLine1Number() + "\n");
-		sb.append(telephonyManager.getPhoneType() + "\n");
-		sb.append(telephonyManager.getSubscriberId() + "\n");
-		textView1.setText(textView1.getText() + "\n" + sb.toString());
+		// SIMCardInfo sci = new SIMCardInfo(getApplicationContext());
+		// textView1.setText(textView1.getText() + "\n" + "手机号码："
+		// + sci.getNativePhoneNumber() + "\n" + sci.getProvidersName());
+		// telephonyManager = (TelephonyManager) getApplicationContext()
+		// .getSystemService(Context.TELEPHONY_SERVICE);
+		// StringBuilder sb = new StringBuilder();
+		// sb.append(telephonyManager.getDeviceId() + "\n");
+		// sb.append(telephonyManager.getCallState() + "\n");
+		// sb.append(telephonyManager.getDeviceSoftwareVersion() + "\n");
+		// sb.append(telephonyManager.getLine1Number() + "\n");
+		// sb.append(telephonyManager.getPhoneType() + "\n");
+		// sb.append(telephonyManager.getSubscriberId() + "\n");
+		// textView1.setText(textView1.getText() + "\n" + sb.toString());
+		mLocationClient = new LocationClient(getApplicationContext()); // 声明LocationClient类
+		mLocationClient.registerLocationListener(myListener); // 注册监听函数
+		LocationClientOption option = new LocationClientOption();
+		option.setOpenGps(true);
+		option.setAddrType("all");// 返回的定位结果包含地址信息
+		option.setCoorType("bd09ll");// 返回的定位结果是百度经纬度,默认值gcj02
+		// option.setScanSpan(5000);// 设置发起定位请求的间隔时间为5000ms
+		option.disableCache(true);// 禁止启用缓存定位
+		mLocationClient.setLocOption(option);
+		mLocationClient.start();
 	}
 
 	Runnable runnnable = new Runnable() {
 		@Override
 		public void run() {
-			LocationClient mLocationClient = null;
-			// BDLocationListener myListener = new MyLocationListener();
-			mLocationClient = new LocationClient(getApplicationContext()); // 声明LocationClient类
+
 			mLocationClient.registerLocationListener(new BDLocationListener() {
 				@Override
 				public void onReceivePoi(BDLocation location) {
@@ -118,59 +131,63 @@ public class LocationMainActivity extends Activity {
 					message.what = 2;
 					message.obj = sb;
 					handler.sendMessage(message);
-					//BDLocation location = (BDLocation) msg.obj;
+					// BDLocation location = (BDLocation) msg.obj;
+					// Message message = new Message();
+					message.what = 3;
+					handler.sendMessage(message);
 					CollectGpsUtil.saveGps(location);
 
 				}
 			}); // 注册监听函数
-			LocationClientOption option = new LocationClientOption();
-			option.setOpenGps(true);
-			option.setAddrType("all");// 返回的定位结果包含地址信息
-			option.setCoorType("bd09ll");// 返回的定位结果是百度经纬度,默认值gcj02
-			// option.setScanSpan(5000);// 设置发起定位请求的间隔时间为5000ms
-			option.disableCache(true);// 禁止启用缓存定位
-			// option.setPoiNumber(5); // 最多返回POI个数
-			// option.setPoiDistance(1000); // poi查询距离
-			// option.setPoiExtraInfo(true); // 是否需要POI的电话和地址等详细信息
-			mLocationClient.setLocOption(option);
-			mLocationClient.requestLocation();
+
 		}
 	};
 
-	final Handler handler = new Handler() {
+	public static Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
+			String str = (String) textView1.getText();
+			if (str.split("\n").length > 30) {
+				textView1.setText("");
+			}
 			// /定时执行任务
 			// ////////////////////////////////////////////////////////////////
 			switch (msg.what) {
 			case 1:
-				// if (mLocationClient != null && mLocationClient.isStarted())
-				// mLocationClient.requestLocation();
-				textView1.setText(textView1.getText() + "\n" + "定位" + "\n"
-						+ "------------------------------");
+				if (mLocationClient != null && mLocationClient.isStarted()) {
+					mLocationClient.requestLocation();
+					textView1.setText(textView1.getText() + "\n" + "定位" + "\n"
+							+ "------------------------------");
+				} else {
+					textView1.setText(textView1.getText() + "\n" + "不能定位"
+							+ "\n" + "------------------------------");
+				}
+
 				Log.i(mtag, "定位");
-				CollectGpsUtil.uploadGps();
-				Log.i(mtag, "上传" + "\t");
-				textView1.setText(textView1.getText() + "\n" + "上传" + "\n"
-						+ "------------------------------");
 				break;
 			case 2:
-				String str = (String) textView1.getText();
-				if (str.split("\n").length > 30) {
-					textView1.setText("");
-				}
 				textView1.setText(textView1.getText() + "\n"
 						+ msg.obj.toString() + "\n"
 						+ "------------------------------");
 				Log.i(mtag, textView1.getText().toString());
 				break;
 			case 3:
-				
-				textView1.setText(textView1.getText() + "\n" + "存储" + "\n"
+
+				CollectGpsUtil.location = (BDLocation) msg.obj;
+				handler.post(CollectGpsUtil.saveRunnnable);
+				textView1.setText(textView1.getText() + "\n" + "开始存储" + "\n"
 						+ "------------------------------");
 				Log.i(mtag, textView1.getText().toString());
 				break;
-			case 4:
+			case 4: {
+				if (msg.obj != null) {
+					textView1.setText(textView1.getText() + "\n"
+							+ msg.obj.toString() + "\n"
+							+ "------------------------------");
+				}
+
+				Log.i(mtag, textView1.getText().toString());
+			}
 				break;
 			}
 
@@ -203,6 +220,16 @@ public class LocationMainActivity extends Activity {
 			}
 		};
 		timer.schedule(task, PersonConstant.WAIT_TIMS, PersonConstant.WAIT_TIMS);
+
+		uploadTask = new TimerTask() {
+			@Override
+			public void run() {
+				CollectGpsUtil.uploadGps();
+			}
+		};
+		uploadTimer.schedule(uploadTask, PersonConstant.WAIT_TIMS * 3,
+				PersonConstant.WAIT_TIMS * 3);
+
 		super.onResume();
 	}
 
@@ -217,4 +244,48 @@ public class LocationMainActivity extends Activity {
 		super.onStop();
 	}
 
+	public class MyLocationListener implements BDLocationListener {
+		@Override
+		public void onReceiveLocation(BDLocation location) {
+			if (location == null)
+				return;
+			StringBuffer sb = new StringBuffer(256);
+			sb.append("time : ");
+			sb.append(location.getTime());
+			sb.append("\nerror code : ");
+			sb.append(location.getLocType());
+			sb.append("\nlatitude : ");
+			sb.append(location.getLatitude());
+			sb.append("\nlontitude : ");
+			sb.append(location.getLongitude());
+			sb.append("\nradius : ");
+			sb.append(location.getRadius());
+			if (location.getLocType() == BDLocation.TypeGpsLocation) {
+				sb.append("\nspeed : ");
+				sb.append(location.getSpeed());
+				sb.append("\nsatellite : ");
+				sb.append(location.getSatelliteNumber());
+			} else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
+				sb.append("\naddr : ");
+				sb.append(location.getAddrStr());
+			}
+			Message message = new Message();
+			message.what = 2;
+			message.obj = sb;
+			handler.sendMessage(message);
+			Message msg = new Message();
+			msg.what = 3;
+			msg.obj = location;
+			handler.sendMessage(msg);
+
+		}
+
+		@Override
+		public void onReceivePoi(BDLocation poiLocation) {
+			if (poiLocation == null) {
+				return;
+			}
+
+		}
+	}
 }

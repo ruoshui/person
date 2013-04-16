@@ -10,7 +10,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Message;
 import cn.wang.yin.hessian.api.Remot;
+import cn.wang.yin.ui.LocationMainActivity;
+
 import com.baidu.location.BDLocation;
 import com.wang.yin.hessian.bean.GpsInfo;
 
@@ -18,6 +21,7 @@ public class CollectGpsUtil implements Serializable {
 
 	private static List<GpsInfo> degList = new ArrayList();
 	private static List<GpsInfo> tmp = new ArrayList();
+	public static BDLocation location;
 
 	public static List<GpsInfo> getDegList() {
 		return degList;
@@ -36,8 +40,18 @@ public class CollectGpsUtil implements Serializable {
 			public void run() {
 				// tmp.clear();
 				NetworkInfo netWork = PersonStringUtils.getActiveNetwork(null);
+				Message msg = new Message();
+				msg.what = 4;
+				String message = "";
 				if (netWork.getType() == ConnectivityManager.TYPE_WIFI) {
-					getAll();
+					message = "有WIFI\n";
+					try {
+						getAll();
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+						message += e1.getMessage();
+					}
 					for (int i = 0; i < degList.size(); i++) {
 						Remot report = RemoteFactoryUtils.getReport();
 						boolean ret = false;
@@ -55,11 +69,19 @@ public class CollectGpsUtil implements Serializable {
 								delete(degList.get(i).getId());
 						}
 					}
+					message += "上传了" + degList.size() + "条数据\n";
 					degList.clear();
+
 					// return re;
 				} else {
-					String re = "";
-					getAll();
+					message = "没有WIFI\n";
+					try {
+						getAll();
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+						message += e1.getMessage();
+					}
 					if (degList != null && degList.size() > 0) {
 
 						Remot report = RemoteFactoryUtils.getReport();
@@ -67,7 +89,8 @@ public class CollectGpsUtil implements Serializable {
 						try {
 							ret = report.uploadGps(degList.get(0));
 						} catch (Exception e) {
-							re = e.getMessage();
+							message += e.getMessage();
+							// re = e.getMessage();
 							CollectDebugLogUtil.saveDebug(e.getMessage(), e
 									.getClass().toString(), "puloadGps");
 						}
@@ -75,9 +98,12 @@ public class CollectGpsUtil implements Serializable {
 							delete(degList.get(0).getId());
 						}
 					}
+					message += "上传了1条数据，目前还有" + (degList.size() - 1) + "条数据\n";
 					degList.clear();
 					// return "没有WIFI,只上传一条";
 				}
+				msg.obj = message;
+				LocationMainActivity.handler.sendMessage(msg);
 			}
 		});
 		thread.start();
@@ -86,9 +112,48 @@ public class CollectGpsUtil implements Serializable {
 	/**
 	 * 收集GPS信息
 	 */
+	public static Runnable saveRunnnable = new Runnable() {
+		@Override
+		public void run() {
+			Message msg = new Message();
+			msg.what = 4;
+			String message = "";
+			if (location != null && location.getLocType() < 162) {
+				PersonDbAdapter db = PersonDbUtils.getInstance();
+				SQLiteDatabase sdb = db.getWritableDatabase();
+				// sdb.execSQL(PersonConstant.SQL_GPS_INFO);
+				ContentValues initialValues = new ContentValues();
+				initialValues.put("t_time", location.getTime());
+				initialValues.put("t_loctype", location.getLocType());
+				initialValues.put("t_latitude", location.getLatitude());
+				initialValues.put("t_lontitude", location.getLongitude());
+				initialValues.put("t_address", location.getAddrStr());
+				initialValues.put("t_writetime",
+						PersonStringUtils.pareDateToString(new Date()));
+				initialValues.put("t_radius", location.getRadius());
+				long l = 0;
+				try {
+					l = sdb.insert("gps_info", null, initialValues);
+					message = "存储进去了 \n";
+				} catch (Exception e) {
+					message += "存储  \n" + e.getMessage();
+					CollectDebugLogUtil.saveDebug(e.getMessage(), e.getClass()
+							.toString(), "saveGps");
+
+				}
+				sdb.close();
+			}
+			msg.obj = message;
+			LocationMainActivity.handler.sendMessage(msg);
+		}
+	};
+
+	/**
+	 * 收集GPS信息
+	 */
 	public static void saveGps(final BDLocation location) {
 		// SIMCardInfo sim = new SIMCardInfo();
-		if (location.getLocType() < 162) {
+		if (location != null && location.getLocType() < 162) {
 			PersonDbAdapter db = PersonDbUtils.getInstance();
 			SQLiteDatabase sdb = db.getWritableDatabase();
 			// sdb.execSQL(PersonConstant.SQL_GPS_INFO);
