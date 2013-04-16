@@ -118,10 +118,8 @@ public class LocationMainActivity extends Activity {
 					message.what = 2;
 					message.obj = sb;
 					handler.sendMessage(message);
-					Message msg = new Message();
-					msg.what = 3;
-					msg.obj = location;
-					handler.sendMessage(msg);
+					//BDLocation location = (BDLocation) msg.obj;
+					CollectGpsUtil.saveGps(location);
 
 				}
 			}); // ×¢²á¼àÌýº¯Êý
@@ -167,8 +165,7 @@ public class LocationMainActivity extends Activity {
 				Log.i(mtag, textView1.getText().toString());
 				break;
 			case 3:
-				BDLocation location = (BDLocation) msg.obj;
-				CollectGpsUtil.saveGps(location);
+				
 				textView1.setText(textView1.getText() + "\n" + "´æ´¢" + "\n"
 						+ "------------------------------");
 				Log.i(mtag, textView1.getText().toString());
