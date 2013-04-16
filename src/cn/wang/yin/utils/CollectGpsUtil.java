@@ -11,8 +11,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import cn.wang.yin.hessian.api.Remot;
-import cn.wang.yin.ui.MainActivity;
-
 import com.baidu.location.BDLocation;
 import com.wang.yin.hessian.bean.GpsInfo;
 
