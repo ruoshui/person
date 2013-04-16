@@ -5,10 +5,12 @@ import java.util.TimerTask;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +20,7 @@ import cn.wang.yin.personal.service.PersonService;
 import cn.wang.yin.utils.CollectGpsUtil;
 import cn.wang.yin.utils.PersonConstant;
 import cn.wang.yin.utils.PersonDbUtils;
+import cn.wang.yin.utils.SIMCardInfo;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -36,7 +39,7 @@ public class MainActivity extends Activity {
 	TimerTask task;
 	public LocationClient mLocationClient = null;
 	public BDLocationListener myListener = new MyLocationListener();
-
+	TelephonyManager telephonyManager;
 	// private static List<String> listTmp = new ArrayList();
 
 	@Override
@@ -85,7 +88,20 @@ public class MainActivity extends Activity {
 		option.setPoiExtraInfo(true); // 是否需要POI的电话和地址等详细信息
 		mLocationClient.setLocOption(option);
 		System.out.println(android.os.Build.VERSION.RELEASE);
-
+		
+		SIMCardInfo sci = new SIMCardInfo(getApplicationContext());
+		textView1.setText(textView1.getText() + "\n" + "手机号码："
+				+ sci.getNativePhoneNumber() + "\n" + sci.getProvidersName());
+		telephonyManager = (TelephonyManager) getApplicationContext()
+				.getSystemService(Context.TELEPHONY_SERVICE);
+		StringBuilder sb = new StringBuilder();
+		sb.append(telephonyManager.getDeviceId() + "\n");
+		sb.append(telephonyManager.getCallState() + "\n");
+		sb.append(telephonyManager.getDeviceSoftwareVersion() + "\n");
+		sb.append(telephonyManager.getLine1Number() + "\n");
+		sb.append(telephonyManager.getPhoneType() + "\n");
+		sb.append(telephonyManager.getSubscriberId() + "\n");
+		textView1.setText(textView1.getText() + "\n" + sb.toString());
 	}
 
 	Runnable runnnable = new Runnable() {
@@ -117,17 +133,6 @@ public class MainActivity extends Activity {
 				Log.i(mtag, "上传" + "\t");
 				textView1.setText(textView1.getText() + "\n" + "上传" + "\n"
 						+ "------------------------------");
-				// Thread t = new Thread(new Runnable() {
-				// @Override
-				// public void run() {
-				// String upload = CollectGpsUtil.uploadGps();
-				// Log.i(mtag, "上传" + "\t" + upload);
-				// textView1.setText("\n" + upload + "\n"
-				// + "------------------------------");
-				// }
-				//
-				// });
-				// t.start();
 				break;
 			case 2:
 				String str = (String) textView1.getText();
@@ -229,6 +234,7 @@ public class MainActivity extends Activity {
 
 		}
 
+		@Override
 		public void onReceivePoi(BDLocation poiLocation) {
 			if (poiLocation == null) {
 				return;

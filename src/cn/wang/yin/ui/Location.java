@@ -109,6 +109,7 @@ public class Location extends Activity {
 
 		}
 
+		@Override
 		public void onReceivePoi(BDLocation poiLocation) {
 			if (poiLocation == null) {
 				return;

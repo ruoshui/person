@@ -1,7 +1,5 @@
 package cn.wang.yin.personal.service.listenner;
 
-import java.util.logging.Logger;
-
 import android.content.Context;
 
 import cn.wang.yin.utils.CollectGpsUtil;

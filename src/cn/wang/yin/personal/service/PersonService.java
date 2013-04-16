@@ -7,7 +7,6 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-import cn.wang.yin.personal.service.listenner.LocationProvider;
 import cn.wang.yin.utils.CollectGpsUtil;
 import cn.wang.yin.utils.PersonConstant;
 
