@@ -5,28 +5,22 @@ import java.util.TimerTask;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import cn.wang.yin.personal.R;
-import cn.wang.yin.personal.service.PersonService;
-import cn.wang.yin.ui.MainActivity.MyLocationListener;
+import cn.wang.yin.personal.service.HandlerService;
 import cn.wang.yin.utils.CollectGpsUtil;
-import cn.wang.yin.utils.PersonConstant;
 import cn.wang.yin.utils.PersonDbUtils;
-import cn.wang.yin.utils.SIMCardInfo;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
 
 @SuppressLint("NewApi")
 public class LocationMainActivity extends Activity {
@@ -36,6 +30,7 @@ public class LocationMainActivity extends Activity {
 	int i = 0;
 	public static final int FAIL = 0;
 	public static final int SUCCESS = 1;
+	public static final int SAVE = 3;
 	final Timer timer = new Timer();
 	TimerTask task;
 	Timer uploadTimer = new Timer();
@@ -82,15 +77,17 @@ public class LocationMainActivity extends Activity {
 		// sb.append(telephonyManager.getSubscriberId() + "\n");
 		// textView1.setText(textView1.getText() + "\n" + sb.toString());
 		mLocationClient = new LocationClient(getApplicationContext()); // 声明LocationClient类
-		mLocationClient.registerLocationListener(myListener); // 注册监听函数
-		LocationClientOption option = new LocationClientOption();
-		option.setOpenGps(true);
-		option.setAddrType("all");// 返回的定位结果包含地址信息
-		option.setCoorType("bd09ll");// 返回的定位结果是百度经纬度,默认值gcj02
+		// mLocationClient.registerLocationListener(myListener); // 注册监听函数
+		// LocationClientOption option = new LocationClientOption();
+		// option.setOpenGps(true);
+		// option.setAddrType("all");// 返回的定位结果包含地址信息
+		// option.setCoorType("bd09ll");// 返回的定位结果是百度经纬度,默认值gcj02
 		// option.setScanSpan(5000);// 设置发起定位请求的间隔时间为5000ms
-		option.disableCache(true);// 禁止启用缓存定位
-		mLocationClient.setLocOption(option);
-		mLocationClient.start();
+		// option.disableCache(true);// 禁止启用缓存定位
+		// mLocationClient.setLocOption(option);
+		// mLocationClient.start();
+		push("开始启动服务");
+		startService(new Intent(getApplicationContext(), HandlerService.class));
 	}
 
 	Runnable runnnable = new Runnable() {
@@ -146,10 +143,7 @@ public class LocationMainActivity extends Activity {
 	public static Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-			String str = (String) textView1.getText();
-			if (str.split("\n").length > 60) {
-				textView1.setText("");
-			}
+
 			// /定时执行任务
 			// ////////////////////////////////////////////////////////////////
 			switch (msg.what) {
@@ -175,15 +169,20 @@ public class LocationMainActivity extends Activity {
 
 				CollectGpsUtil.location = (BDLocation) msg.obj;
 				handler.post(CollectGpsUtil.saveRunnnable);
-				textView1.setText(textView1.getText() + "\n" + "开始存储" + "\n"
-						+ "------------------------------");
-				Log.i(mtag, textView1.getText().toString());
+				push("开始存储");
+				Log.w(mtag, textView1.getText().toString());
 				break;
 			case 4: {
 				if (msg.obj != null) {
-					textView1.setText(textView1.getText() + "\n"
-							+ msg.obj.toString() + "\n"
-							+ "------------------------------");
+					push(msg.obj.toString());
+				}
+
+				Log.i(mtag, textView1.getText().toString());
+			}
+				break;
+			case 5: {
+				if (msg.obj != null) {
+					push(msg.obj.toString());
 				}
 
 				Log.i(mtag, textView1.getText().toString());
@@ -209,26 +208,34 @@ public class LocationMainActivity extends Activity {
 		super.onRestart();
 	}
 
+	static int k = 0;
+
+	public static void push(String str) {
+		k++;
+		if (k > 60) {
+			textView1.setText("");
+			k = 0;
+		}
+		textView1.setText(str + "\n" + "------------------------------\n"
+				+ textView1.getText() + "\n");
+	}
+
 	@Override
 	protected void onResume() {
-		task = new TimerTask() {
-			@Override
-			public void run() {
-				Message message = new Message();
-				message.what = 1;
-				handler.sendMessage(message);
-			}
-		};
-		timer.schedule(task, PersonConstant.WAIT_TIMS, PersonConstant.WAIT_TIMS);
-
-		uploadTask = new TimerTask() {
-			@Override
-			public void run() {
-				CollectGpsUtil.uploadGps();
-			}
-		};
-		uploadTimer.schedule(uploadTask, PersonConstant.WAIT_TIMS * 3,
-				PersonConstant.WAIT_TIMS * 3);
+		/*
+		 * task = new TimerTask() {
+		 * 
+		 * @Override public void run() { Message message = new Message();
+		 * message.what = 1; handler.sendMessage(message); } };
+		 * timer.schedule(task, PersonConstant.WAIT_TIMS,
+		 * PersonConstant.WAIT_TIMS);
+		 * 
+		 * uploadTask = new TimerTask() {
+		 * 
+		 * @Override public void run() { CollectGpsUtil.uploadGps(); } };
+		 * uploadTimer.schedule(uploadTask, PersonConstant.WAIT_TIMS * 3,
+		 * PersonConstant.WAIT_TIMS * 3);
+		 */
 
 		super.onResume();
 	}

@@ -51,7 +51,7 @@ public class MainActivity extends Activity {
 	//	button1 = (Button) findViewById(R.id.button1);
 		textView1 = (TextView) findViewById(R.id.textView1);
 		// SIMCardInfo.init(getApplicationContext());
-		// handler.post(runnnable);
+		 handler.post(runnnable);
 //		button1.setOnClickListener(new View.OnClickListener() {
 //			@Override
 //			public void onClick(View v) {

@@ -62,6 +62,10 @@
             android:name="cn.wang.yin.personal.service.PersonService"
             android:enabled="true" >
         </service>
+        <service
+            android:name="cn.wang.yin.personal.service.HandlerService"
+            android:enabled="true" >
+        </service>
     </application>
 
 </manifest>
