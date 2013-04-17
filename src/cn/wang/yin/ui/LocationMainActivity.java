@@ -1,5 +1,6 @@
 package cn.wang.yin.ui;
 
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -11,12 +12,16 @@ import android.os.Handler;
 import android.os.Message;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import cn.wang.yin.personal.R;
 import cn.wang.yin.personal.service.HandlerService;
 import cn.wang.yin.utils.CollectGpsUtil;
+import cn.wang.yin.utils.PersonConstant;
 import cn.wang.yin.utils.PersonDbUtils;
+import cn.wang.yin.utils.PersonStringUtils;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -35,10 +40,15 @@ public class LocationMainActivity extends Activity {
 	TimerTask task;
 	Timer uploadTimer = new Timer();
 	TimerTask uploadTask;
-
+	SeekBar seekBar1;
+	SeekBar seekBar2;
+	TextView seekBar2_textView;
+	TextView seekBar1_textView;
 	public static LocationClient mLocationClient = null;
 	public BDLocationListener myListener = new MyLocationListener();
 	TelephonyManager telephonyManager;
+	public static long locationTime = PersonConstant.WAIT_TIMS;
+	public static long uploadTime = PersonConstant.UPLOAD_TIMS;
 
 	// private static List<String> listTmp = new ArrayList();
 
@@ -49,6 +59,11 @@ public class LocationMainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		// button1 = (Button) findViewById(R.id.button1);
 		textView1 = (TextView) findViewById(R.id.textView1);
+
+		seekBar1_textView = (TextView) findViewById(R.id.seekBar1_textView);
+		seekBar2_textView = (TextView) findViewById(R.id.seekBar2_textView);
+		seekBar1_textView.setVisibility(View.GONE);
+		seekBar2_textView.setVisibility(View.GONE);
 		// SIMCardInfo.init(getApplicationContext());
 		// handler.post(runnnable);
 		// button1.setOnClickListener(new View.OnClickListener() {
@@ -88,6 +103,78 @@ public class LocationMainActivity extends Activity {
 		// mLocationClient.start();
 		push("开始启动服务");
 		startService(new Intent(getApplicationContext(), HandlerService.class));
+		seekBar1 = (SeekBar) findViewById(R.id.seekBar1);
+		seekBar2 = (SeekBar) findViewById(R.id.seekBar2);
+		seekBar1.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				if (seekBar.getId() == R.id.seekBar1) {
+					HandlerService.task.cancel();
+					if (HandlerService.timer != null)
+						HandlerService.timer.schedule(HandlerService.task,
+								locationTime, locationTime);
+				} else if (seekBar.getId() == R.id.seekBar2) {
+					HandlerService.uploadTask.cancel();
+					if (HandlerService.uploadTimer != null)
+						HandlerService.uploadTimer.schedule(
+								HandlerService.uploadTask, uploadTime,
+								uploadTime);
+				}
+			}
+
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser) {
+				progress = progress > 0 ? progress : 1;
+				if (fromUser) {
+					locationTime = 1000 * progress;
+				}
+				seekBar1_textView.setText("定位间隔为：" + locationTime / 1000 + "秒");
+			}
+		});
+		seekBar2.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				// TODO Auto-generated method stub
+				if (seekBar.getId() == R.id.seekBar1) {
+					HandlerService.task.cancel();
+					if (HandlerService.timer != null)
+						HandlerService.timer.schedule(HandlerService.task,
+								locationTime, locationTime);
+				} else if (seekBar.getId() == R.id.seekBar2) {
+					HandlerService.uploadTask.cancel();
+					if (HandlerService.uploadTimer != null)
+						HandlerService.uploadTimer.schedule(
+								HandlerService.uploadTask, uploadTime,
+								uploadTime);
+				}
+			}
+
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser) {
+				progress = progress > 0 ? progress : 1;
+				if (fromUser) {
+					uploadTime = 1000 * progress;
+				}
+				seekBar2_textView.setText("上传间隔为：" + uploadTime / 1000 + "秒");
+
+			}
+		});
 	}
 
 	Runnable runnnable = new Runnable() {
@@ -184,7 +271,6 @@ public class LocationMainActivity extends Activity {
 				if (msg.obj != null) {
 					push(msg.obj.toString());
 				}
-
 				Log.i(mtag, textView1.getText().toString());
 			}
 				break;
@@ -216,7 +302,8 @@ public class LocationMainActivity extends Activity {
 			textView1.setText("");
 			k = 0;
 		}
-		textView1.setText(str + "\n" + "------------------------------\n"
+		textView1.setText("\n" + PersonStringUtils.pareDateToString(new Date())
+				+ "\n" + str + "\n" + "------------------------------\n"
 				+ textView1.getText() + "\n");
 	}
 

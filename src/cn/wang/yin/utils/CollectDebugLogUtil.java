@@ -14,7 +14,6 @@ import android.net.NetworkInfo;
 import cn.wang.yin.bean.DebuggingInformation;
 import cn.wang.yin.hessian.api.Remot;
 
-
 public class CollectDebugLogUtil implements Serializable {
 
 	private static List<DebuggingInformation> degList = new ArrayList();
@@ -57,13 +56,6 @@ public class CollectDebugLogUtil implements Serializable {
 						Remot report = RemoteFactoryUtils.getFactory().create(
 								Remot.class, PersonConstant.REMOTE_URL);
 						boolean ret = false;
-						// ret = report.CelectionDebug(
-						// degList.get(i).getMessage(), degList.get(i)
-						// .getExceptiontype(), degList.get(i)
-						// .getExlocation(), degList.get(i)
-						// .getPhonenum(), degList.get(i)
-						// .getPruducttime(), PersonStringUtils
-						// .pareDateToString(new Date()), 0);
 						if (ret) {
 							delete(degList.get(i).getId());
 						}
@@ -90,6 +82,19 @@ public class CollectDebugLogUtil implements Serializable {
 	 */
 	public static void saveDebug(String message, String exceptiontype,
 			String exlocation) {
+		if (PersonDbUtils.isLock()) {
+			try {
+				Thread.sleep(PersonConstant.SLEEP_TIMS);
+				saveDebug(message, exceptiontype, exlocation);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return;
+			}
+			return;
+		} else {
+			PersonDbUtils.lock();
+		}
 		SQLiteDatabase db = PersonDbUtils.getInstance().getWritableDatabase();
 		// EtongUser user = InstensUserData.getUserData().getEtongUser();
 		db.execSQL(PersonConstant.SQL_PERSON_COLLECT);
@@ -100,14 +105,33 @@ public class CollectDebugLogUtil implements Serializable {
 		initialValues.put("phonenum", "13168096632");
 		initialValues.put("pruducttime",
 				PersonStringUtils.pareDateToString(new Date()));
-		db.insert("person_collect", null, initialValues);
+		try {
+			db.insert("person_collect", null, initialValues);
+		} catch (Exception e) {
+			PersonDbUtils.unLock();
+			e.printStackTrace();
+		}
 		db.close();
+		PersonDbUtils.unLock();
 	}
 
 	/****
 	 * 查询所有调试信息
 	 */
 	public static void getAll() {
+		if (PersonDbUtils.isLock()) {
+			try {
+				Thread.sleep(PersonConstant.SLEEP_TIMS);
+				getAll();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return;
+			}
+			return;
+		} else {
+			PersonDbUtils.lock();
+		}
 		try {
 			SQLiteDatabase db = PersonDbUtils.getInstance()
 					.getWritableDatabase();
@@ -126,7 +150,9 @@ public class CollectDebugLogUtil implements Serializable {
 			}
 			cur.close();
 			db.close();
+			PersonDbUtils.unLock();
 		} catch (Exception e) {
+			PersonDbUtils.unLock();
 			CollectDebugLogUtil.saveDebug(e.getMessage(), e.getClass()
 					.toString(), "\t" + "CollectDebugLogUtil");
 			e.printStackTrace();
@@ -138,13 +164,27 @@ public class CollectDebugLogUtil implements Serializable {
 	 */
 
 	public static boolean delete(int id) {
+		if (PersonDbUtils.isLock()) {
+			try {
+				Thread.sleep(PersonConstant.SLEEP_TIMS);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return delete(id);
+			}
+			return delete(id);
+		} else {
+			PersonDbUtils.lock();
+		}
 		boolean delete = false;
 		try {
 			SQLiteDatabase db = PersonDbUtils.getInstance()
 					.getWritableDatabase();
 			delete = db.delete("etong_collect", "id" + "=" + id, null) > 0;
 			db.close();
+			PersonDbUtils.unLock();
 		} catch (Exception e) {
+			PersonDbUtils.unLock();
 			CollectDebugLogUtil.saveDebug(e.getMessage(), e.getClass()
 					.toString(), "\t" + "CollectDebugLogUtil");
 			e.printStackTrace();

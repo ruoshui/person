@@ -43,7 +43,8 @@ public class CollectGpsUtil implements Serializable {
 				Message msg = new Message();
 				msg.what = 4;
 				String message = "";
-				if (netWork.getType() == ConnectivityManager.TYPE_WIFI) {
+				if (netWork != null
+						&& netWork.getType() == ConnectivityManager.TYPE_WIFI) {
 					message = "有WIFI\n";
 					try {
 						getAll();
@@ -52,28 +53,41 @@ public class CollectGpsUtil implements Serializable {
 						e1.printStackTrace();
 						message += e1.getMessage();
 					}
-					for (int i = 0; i < degList.size(); i++) {
-						Remot report = RemoteFactoryUtils.getReport();
-						boolean ret = false;
-						try {
-							// GpsInfo info = degList.get(i);
-							// if (info.getErrorCode() < 162)
-							ret = report.uploadGps(degList.get(i));
-						} catch (Exception e) {
-							CollectDebugLogUtil.saveDebug(e.getMessage(), e
-									.getClass().toString(), "puloadGps");
+					// for (int i = 0; i < degList.size(); i++) {
+					// Remot report = RemoteFactoryUtils.getReport();
+					// boolean ret = false;
+					// try {
+					// // GpsInfo info = degList.get(i);
+					// // if (info.getErrorCode() < 162)
+					// ret = report.uploadGps(degList.get(i));
+					// } catch (Exception e) {
+					// CollectDebugLogUtil.saveDebug(e.getMessage(), e
+					// .getClass().toString(), "puloadGps");
+					// }
+					// if (ret) {
+					// if (degList != null && degList.size() > 0
+					// && degList.get(i) != null)
+					// delete(degList.get(i).getId());
+					// }
+					// }
+					Remot report = null;
+					int ret = 0;
+					try {
+						report = RemoteFactoryUtils.getReport();
+						ret = report.uploadGps(degList);
+						message += "上传了" + ret + "条数据\n";
+						for (int i = 0; i < degList.size(); i++) {
+							delete(degList.get(i).getId());
 						}
-						if (ret) {
-							if (degList != null && degList.size() > 0
-									&& degList.get(i) != null)
-								delete(degList.get(i).getId());
-						}
+						degList.clear();
+					} catch (Exception e) {
+						message += "上传异常  \n" + e.getMessage();
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-					message += "上传了" + degList.size() + "条数据\n";
-					degList.clear();
 
 					// return re;
-				} else {
+				} else if (netWork != null) {
 					message = "没有WIFI\n";
 					try {
 						getAll();
@@ -94,13 +108,15 @@ public class CollectGpsUtil implements Serializable {
 							CollectDebugLogUtil.saveDebug(e.getMessage(), e
 									.getClass().toString(), "puloadGps");
 						}
-						if (ret) {
+						if (ret && degList != null && degList.size() > 0) {
 							delete(degList.get(0).getId());
 						}
 					}
 					message += "上传了1条数据，目前还有" + (degList.size() - 1) + "条数据\n";
 					degList.clear();
 					// return "没有WIFI,只上传一条";
+				} else if (netWork == null) {
+					message = "没有任何网络\n";
 				}
 				msg.obj = message;
 				LocationMainActivity.handler.sendMessage(msg);
@@ -115,6 +131,20 @@ public class CollectGpsUtil implements Serializable {
 	public static Runnable saveRunnnable = new Runnable() {
 		@Override
 		public void run() {
+			if (PersonDbUtils.isLock()) {
+				try {
+					Thread.sleep(PersonConstant.SLEEP_TIMS);
+					LocationMainActivity.handler.post(saveRunnnable);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return;
+				}
+				return;
+			} else {
+				PersonDbUtils.lock();
+			}
+
 			Message msg = new Message();
 			msg.what = 4;
 			String message = "";
@@ -134,14 +164,16 @@ public class CollectGpsUtil implements Serializable {
 				long l = 0;
 				try {
 					l = sdb.insert("gps_info", null, initialValues);
-					message = "存储进去了 \n";
+					message = "存储进去了 \t当前数据库索引id为：" + l + "\n";
 				} catch (Exception e) {
-					message += "存储  \n" + e.getMessage();
+					PersonDbUtils.unLock();
+					message += "存储异常  \n" + e.getMessage();
 					CollectDebugLogUtil.saveDebug(e.getMessage(), e.getClass()
 							.toString(), "saveGps");
 
 				}
 				sdb.close();
+				PersonDbUtils.unLock();
 			}
 			msg.obj = message;
 			LocationMainActivity.handler.sendMessage(msg);
@@ -152,6 +184,20 @@ public class CollectGpsUtil implements Serializable {
 	 * 收集GPS信息
 	 */
 	public static void saveGps(final BDLocation location) {
+		if (PersonDbUtils.isLock()) {
+			try {
+				Thread.sleep(PersonConstant.SLEEP_TIMS);
+				saveGps(location);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return;
+			}
+			return;
+		} else {
+			PersonDbUtils.lock();
+		}
+
 		// SIMCardInfo sim = new SIMCardInfo();
 		if (location != null && location.getLocType() < 162) {
 			PersonDbAdapter db = PersonDbUtils.getInstance();
@@ -170,10 +216,12 @@ public class CollectGpsUtil implements Serializable {
 			try {
 				l = sdb.insert("gps_info", null, initialValues);
 			} catch (Exception e) {
+				PersonDbUtils.unLock();
 				CollectDebugLogUtil.saveDebug(e.getMessage(), e.getClass()
 						.toString(), "saveGps");
 			}
 			sdb.close();
+			PersonDbUtils.unLock();
 		}
 	}
 
@@ -181,6 +229,19 @@ public class CollectGpsUtil implements Serializable {
 	 * 查询所有调试信息
 	 */
 	public static void getAll() {
+		if (PersonDbUtils.isLock()) {
+			try {
+				Thread.sleep(PersonConstant.SLEEP_TIMS);
+				getAll();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return;
+			}
+			return;
+		} else {
+			PersonDbUtils.lock();
+		}
 		try {
 			SQLiteDatabase db = PersonDbUtils.getInstance()
 					.getWritableDatabase();
@@ -204,7 +265,9 @@ public class CollectGpsUtil implements Serializable {
 			}
 			cur.close();
 			db.close();
+			PersonDbUtils.unLock();
 		} catch (Exception e) {
+			PersonDbUtils.unLock();
 			CollectDebugLogUtil.saveDebug(e.getMessage(), e.getClass()
 					.toString(), "getAll");
 		}
@@ -215,13 +278,29 @@ public class CollectGpsUtil implements Serializable {
 	 */
 
 	public static boolean delete(int id) {
+		if (PersonDbUtils.isLock()) {
+			try {
+				Thread.sleep(PersonConstant.SLEEP_TIMS);
+				return delete(id);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return delete(id);
+			}
+
+		} else {
+			PersonDbUtils.lock();
+		}
+
 		boolean delete = false;
 		try {
 			SQLiteDatabase db = PersonDbUtils.getInstance()
 					.getWritableDatabase();
 			delete = db.delete("gps_info", "t_id" + "=" + id, null) > 0;
 			db.close();
+			PersonDbUtils.unLock();
 		} catch (Exception e) {
+			PersonDbUtils.unLock();
 			CollectDebugLogUtil.saveDebug(e.getMessage(), e.getClass()
 					.toString(), "delete");
 		}

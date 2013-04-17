@@ -1,14 +1,18 @@
 package cn.wang.yin.utils;
 
+import cn.wang.yin.ui.LocationMainActivity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Message;
 
 public class PersonDbUtils {
 	private static PersonDbAdapter personDb;
 	private static Context context;
 	private static SharedPreferences preference;
+
+	private static boolean lock = false;
 
 	public static void init(Context ctx) {
 		if (ctx != null) {
@@ -22,6 +26,22 @@ public class PersonDbUtils {
 		sdb.close();
 	}
 
+	public static void lock() {
+		Message message = new Message();
+		message.what = 5;
+		message.obj = "锁定数据库";
+		LocationMainActivity.handler.sendMessage(message);
+		setLock(true);
+	}
+
+	public static void unLock() {
+		Message message = new Message();
+		message.what = 5;
+		message.obj = "解除锁定数据库";
+		LocationMainActivity.handler.sendMessage(message);
+		setLock(false);
+	}
+
 	public static PersonDbAdapter getInstance() {
 		if (personDb == null) {
 			personDb = new PersonDbAdapter(context);
@@ -31,6 +51,14 @@ public class PersonDbUtils {
 		// preference.
 		// getPreferences(Activity.MODE_PRIVATE);
 		return personDb;
+	}
+
+	public static boolean isLock() {
+		return lock;
+	}
+
+	private static void setLock(boolean lock) {
+		PersonDbUtils.lock = lock;
 	}
 
 	public static SharedPreferences getPreference() {

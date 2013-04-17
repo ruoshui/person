@@ -19,8 +19,10 @@ import com.baidu.location.LocationClientOption;
 public class HandlerService extends IntentService {
 	public static LocationClient mLocationClient = null;
 	public BDLocationListener myListener = new MyLocationListener();
-	final Timer timer = new Timer();
-	TimerTask task;
+	public static Timer timer = new Timer();
+	public static TimerTask task;
+	public static Timer uploadTimer = new Timer();
+	public static TimerTask uploadTask;
 
 	public HandlerService() {
 
@@ -45,20 +47,22 @@ public class HandlerService extends IntentService {
 		option.disableCache(true);// 禁止启用缓存定位
 		mLocationClient.setLocOption(option);
 		mLocationClient.start();
-		task = new TimerTask() {
-			@Override
-			public void run() {
-				Message message = new Message();
-				message.what = 1;
-				handler.sendMessage(message);
-			}
-		};
-		timer.schedule(task, PersonConstant.WAIT_TIMS, PersonConstant.WAIT_TIMS);
+		// task = new TimerTask() {
+		// @Override
+		// public void run() {
+		// Message message = new Message();
+		// message.what = 1;
+		// handler.sendMessage(message);
+		// }
+		// };
+		// timer.schedule(task, PersonConstant.WAIT_TIMS,
+		// PersonConstant.WAIT_TIMS);
 		super.onCreate();
 	}
 
 	@Override
 	public void onStart(Intent intent, int startId) {
+
 		task = new TimerTask() {
 			@Override
 			public void run() {
@@ -68,6 +72,14 @@ public class HandlerService extends IntentService {
 			}
 		};
 		timer.schedule(task, PersonConstant.WAIT_TIMS, PersonConstant.WAIT_TIMS);
+		uploadTask = new TimerTask() {
+			@Override
+			public void run() {
+				CollectGpsUtil.uploadGps();
+			}
+		};
+		uploadTimer.schedule(uploadTask, PersonConstant.UPLOAD_TIMS,
+				PersonConstant.UPLOAD_TIMS);
 		super.onStart(intent, startId);
 	}
 
@@ -84,13 +96,14 @@ public class HandlerService extends IntentService {
 					mLocationClient.requestLocation();
 					message.obj = "定位";
 				} else {
-					message.obj = "有异常\t" + mLocationClient.toString();
+					message.obj = "有异常\t" + mLocationClient;
 				}
 				break;
 			case 2:
 				if (msg.obj != null) {
 					message.obj = msg.obj.toString();
 				}
+
 				break;
 			case 3:
 				CollectGpsUtil.location = (BDLocation) msg.obj;
