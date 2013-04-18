@@ -22,6 +22,8 @@ public class CollectGpsUtil implements Serializable {
 	private static List<GpsInfo> degList = new ArrayList();
 	private static List<GpsInfo> tmp = new ArrayList();
 	public static BDLocation location;
+	private static double lon = 0.0;
+	private static double lat = 0.0;
 
 	public static List<GpsInfo> getDegList() {
 		return degList;
@@ -143,6 +145,16 @@ public class CollectGpsUtil implements Serializable {
 				return;
 			} else {
 				PersonDbUtils.lock();
+			}
+			if (getLat() == location.getLatitude()
+					&& getLon() == location.getLongitude()) {
+				Message msg = new Message();
+				msg.what = 4;
+				msg.obj = "与上一个点重复，不必存储";
+				LocationMainActivity.handler.sendMessage(msg);
+			} else {
+				setLat(location.getLatitude());
+				setLon(location.getLongitude());
 			}
 
 			Message msg = new Message();
@@ -306,4 +318,21 @@ public class CollectGpsUtil implements Serializable {
 		}
 		return delete;
 	}
+
+	public static double getLon() {
+		return lon;
+	}
+
+	public static void setLon(double lon) {
+		CollectGpsUtil.lon = lon;
+	}
+
+	public static double getLat() {
+		return lat;
+	}
+
+	public static void setLat(double lat) {
+		CollectGpsUtil.lat = lat;
+	}
+
 }
