@@ -53,7 +53,7 @@ public class PersonDbUtils {
 		return personDb;
 	}
 
-	public static boolean isLock() {
+	public static boolean isLocked() {
 		return lock;
 	}
 

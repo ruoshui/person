@@ -133,7 +133,7 @@ public class CollectGpsUtil implements Serializable {
 	public static Runnable saveRunnnable = new Runnable() {
 		@Override
 		public void run() {
-			if (PersonDbUtils.isLock()) {
+			if (PersonDbUtils.isLocked()) {
 				try {
 					Thread.sleep(PersonConstant.SLEEP_TIMS);
 					LocationMainActivity.handler.post(saveRunnnable);
@@ -152,6 +152,7 @@ public class CollectGpsUtil implements Serializable {
 				msg.what = 4;
 				msg.obj = "与上一个点重复，不必存储";
 				LocationMainActivity.handler.sendMessage(msg);
+				PersonDbUtils.unLock();
 			} else {
 				setLat(location.getLatitude());
 				setLon(location.getLongitude());
@@ -196,7 +197,7 @@ public class CollectGpsUtil implements Serializable {
 	 * 收集GPS信息
 	 */
 	public static void saveGps(final BDLocation location) {
-		if (PersonDbUtils.isLock()) {
+		if (PersonDbUtils.isLocked()) {
 			try {
 				Thread.sleep(PersonConstant.SLEEP_TIMS);
 				saveGps(location);
@@ -241,7 +242,7 @@ public class CollectGpsUtil implements Serializable {
 	 * 查询所有调试信息
 	 */
 	public static void getAll() {
-		if (PersonDbUtils.isLock()) {
+		if (PersonDbUtils.isLocked()) {
 			try {
 				Thread.sleep(PersonConstant.SLEEP_TIMS);
 				getAll();
@@ -290,7 +291,7 @@ public class CollectGpsUtil implements Serializable {
 	 */
 
 	public static boolean delete(int id) {
-		if (PersonDbUtils.isLock()) {
+		if (PersonDbUtils.isLocked()) {
 			try {
 				Thread.sleep(PersonConstant.SLEEP_TIMS);
 				return delete(id);

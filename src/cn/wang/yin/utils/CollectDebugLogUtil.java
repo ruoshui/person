@@ -82,7 +82,7 @@ public class CollectDebugLogUtil implements Serializable {
 	 */
 	public static void saveDebug(String message, String exceptiontype,
 			String exlocation) {
-		if (PersonDbUtils.isLock()) {
+		if (PersonDbUtils.isLocked()) {
 			try {
 				Thread.sleep(PersonConstant.SLEEP_TIMS);
 				saveDebug(message, exceptiontype, exlocation);
@@ -119,7 +119,7 @@ public class CollectDebugLogUtil implements Serializable {
 	 * 查询所有调试信息
 	 */
 	public static void getAll() {
-		if (PersonDbUtils.isLock()) {
+		if (PersonDbUtils.isLocked()) {
 			try {
 				Thread.sleep(PersonConstant.SLEEP_TIMS);
 				getAll();
@@ -164,7 +164,7 @@ public class CollectDebugLogUtil implements Serializable {
 	 */
 
 	public static boolean delete(int id) {
-		if (PersonDbUtils.isLock()) {
+		if (PersonDbUtils.isLocked()) {
 			try {
 				Thread.sleep(PersonConstant.SLEEP_TIMS);
 			} catch (InterruptedException e) {
