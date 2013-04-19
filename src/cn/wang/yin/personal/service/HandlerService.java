@@ -36,7 +36,7 @@ public class HandlerService extends IntentService {
 	@Override
 	public void onCreate() {
 		System.out.println("启动了");
-		LocationClient mLocationClient = null;
+
 		mLocationClient = new LocationClient(getApplicationContext()); // 声明LocationClient类
 		mLocationClient.registerLocationListener(myListener); // 注册监听函数
 		LocationClientOption option = new LocationClientOption();
@@ -47,32 +47,21 @@ public class HandlerService extends IntentService {
 		option.disableCache(true);// 禁止启用缓存定位
 		mLocationClient.setLocOption(option);
 		mLocationClient.start();
-		// task = new TimerTask() {
-		// @Override
-		// public void run() {
-		// Message message = new Message();
-		// message.what = 1;
-		// handler.sendMessage(message);
-		// }
-		// };
-		// timer.schedule(task, PersonConstant.WAIT_TIMS,
-		// PersonConstant.WAIT_TIMS);
 		super.onCreate();
 	}
 
 	@Override
 	public void onStart(Intent intent, int startId) {
 
-		task = new TimerTask() {
-			@Override
-			public void run() {
-				Message message = new Message();
-				message.what = 1;
-				handler.sendMessage(message);
-			}
-		};
-		timer.schedule(task, PersonConstant.WAIT_TIMS, PersonConstant.WAIT_TIMS);
-		uploadTask = new TimerTask() {
+//		task = new TimerTask() {
+//			@Override
+//			public void run() {
+//
+//			}
+//		};
+//		timer.schedule(task, PersonConstant.WAIT_TIMS / 10,
+//				PersonConstant.WAIT_TIMS / 10);
+		uploadTask = new TimerTask() {      
 			@Override
 			public void run() {
 				CollectGpsUtil.uploadGps();
@@ -92,12 +81,13 @@ public class HandlerService extends IntentService {
 			// ////////////////////////////////////////////////////////////////
 			switch (msg.what) {
 			case 1:
-				if (mLocationClient != null && mLocationClient.isStarted()) {
-					mLocationClient.requestLocation();
-					message.obj = "定位";
-				} else {
-					message.obj = "有异常\t" + mLocationClient;
-				}
+				// if (mLocationClient != null && mLocationClient.isStarted()) {
+				// mLocationClient.requestLocation();
+				//
+				// message.obj = "定位";
+				// } else {
+				// message.obj = "有异常\t" + mLocationClient;
+				// }
 				break;
 			case 2:
 				if (msg.obj != null) {

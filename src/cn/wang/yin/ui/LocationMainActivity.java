@@ -302,9 +302,13 @@ public class LocationMainActivity extends Activity {
 			textView1.setText("");
 			k = 0;
 		}
-		textView1.setText("\n" + PersonStringUtils.pareDateToString(new Date())
-				+ "\n" + str + "\n" + "------------------------------\n"
-				+ textView1.getText() + "\n");
+		textView1
+				.setText(PersonStringUtils.pareDateToString(new Date())
+						+ "\n"
+						+ str
+						+ "\n"
+						+ "------------------------------------------------------------\n"
+						+ textView1.getText() + "\n");
 	}
 
 	@Override

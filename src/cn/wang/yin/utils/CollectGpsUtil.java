@@ -153,6 +153,7 @@ public class CollectGpsUtil implements Serializable {
 				msg.obj = "与上一个点重复，不必存储";
 				LocationMainActivity.handler.sendMessage(msg);
 				PersonDbUtils.unLock();
+				return;
 			} else {
 				setLat(location.getLatitude());
 				setLon(location.getLongitude());
@@ -177,7 +178,7 @@ public class CollectGpsUtil implements Serializable {
 				long l = 0;
 				try {
 					l = sdb.insert("gps_info", null, initialValues);
-					message = "存储进去了 \t当前数据库索引id为：" + l + "\n";
+					message = "存储进去了 \t当前数据库索引id为：" + l ;
 				} catch (Exception e) {
 					PersonDbUtils.unLock();
 					message += "存储异常  \n" + e.getMessage();
