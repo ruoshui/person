@@ -27,18 +27,18 @@ public class PersonDbUtils {
 	}
 
 	public static void lock() {
-		Message message = new Message();
-		message.what = 5;
-		message.obj = "锁定数据库";
-		LocationMainActivity.handler.sendMessage(message);
+		// Message message = new Message();
+		// message.what = 5;
+		// message.obj = "锁定数据库";
+		// LocationMainActivity.handler.sendMessage(message);
 		setLock(true);
 	}
 
 	public static void unLock() {
-		Message message = new Message();
-		message.what = 5;
-		message.obj = "解除锁定数据库";
-		LocationMainActivity.handler.sendMessage(message);
+		//Message message = new Message();
+		//message.what = 5;
+		//message.obj = "解除锁定数据库";
+		//LocationMainActivity.handler.sendMessage(message);
 		setLock(false);
 	}
 

@@ -23,11 +23,7 @@ public class BootupReceiver extends BroadcastReceiver {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// KeyguardManager keyguardManager =
-		// (KeyguardManager)getSystemService(KEYGUARD_SERVICE);
-		// KeyguardLock lock =
-		// keyguardManager.newKeyguardLock(KEYGUARD_SERVICE);
-		Intent inten = new Intent(context, PersonService.class);
+		Intent inten = new Intent(context, HandlerService.class);
 		inten.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.startService(inten);
 

@@ -4,9 +4,15 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
+import cn.wang.yin.personal.R;
 import cn.wang.yin.ui.LocationMainActivity;
 import cn.wang.yin.utils.CollectGpsUtil;
 import cn.wang.yin.utils.PersonConstant;
@@ -23,6 +29,10 @@ public class HandlerService extends IntentService {
 	public static TimerTask task;
 	public static Timer uploadTimer = new Timer();
 	public static TimerTask uploadTask;
+	public static NotificationManager m_NotificationManager;
+	Intent m_Intent;
+	PendingIntent m_PendingIntent;
+	Notification m_Notification;
 
 	public HandlerService() {
 
@@ -35,8 +45,7 @@ public class HandlerService extends IntentService {
 
 	@Override
 	public void onCreate() {
-		System.out.println("启动了");
-
+		addNotificaction();
 		mLocationClient = new LocationClient(getApplicationContext()); // 声明LocationClient类
 		mLocationClient.registerLocationListener(myListener); // 注册监听函数
 		LocationClientOption option = new LocationClientOption();
@@ -50,26 +59,52 @@ public class HandlerService extends IntentService {
 		super.onCreate();
 	}
 
+	/**
+	 * 添加一个notification
+	 */
+	private void addNotificaction() {
+
+		m_NotificationManager = (NotificationManager) this
+				.getSystemService(Context.NOTIFICATION_SERVICE);
+		// 创建一个Notification
+		Notification m_Notification = new Notification();
+		// 设置显示在手机最上边的状态栏的图标
+		m_Notification.icon = R.drawable.ic_launcher;
+		// 当当前的notification被放到状态栏上的时候，提示内容
+		m_Notification.tickerText = PersonConstant.MSEESGE_REMIND_TICKER;
+		m_Notification.flags |= Notification.FLAG_ONGOING_EVENT;
+		m_Notification.flags |= Notification.FLAG_AUTO_CANCEL;
+		m_Notification.flags |= Notification.FLAG_NO_CLEAR;
+		// 添加声音提示
+		m_Notification.defaults = Notification.DEFAULT_SOUND;
+		m_Notification.audioStreamType = android.media.AudioManager.ADJUST_LOWER;
+		Intent intent = new Intent(this, LocationMainActivity.class);
+		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+				intent, PendingIntent.FLAG_ONE_SHOT);
+		m_Notification.setLatestEventInfo(this, "王隐",
+				PersonConstant.MSEESGE_REMIND_CONTENT, pendingIntent);
+//		m_NotificationManager.notify(PersonConstant.COMMON_NOTIFICATION,
+//				m_Notification);
+	}
+
 	@Override
 	public void onStart(Intent intent, int startId) {
-
-//		task = new TimerTask() {
-//			@Override
-//			public void run() {
-//
-//			}
-//		};
-//		timer.schedule(task, PersonConstant.WAIT_TIMS / 10,
-//				PersonConstant.WAIT_TIMS / 10);
-		uploadTask = new TimerTask() {      
+		uploadTask = new TimerTask() {
 			@Override
 			public void run() {
 				CollectGpsUtil.uploadGps();
+				addNotificaction();
 			}
 		};
 		uploadTimer.schedule(uploadTask, PersonConstant.UPLOAD_TIMS,
 				PersonConstant.UPLOAD_TIMS);
 		super.onStart(intent, startId);
+	}
+	
+	@Override
+	public IBinder onBind(Intent intent) {
+		
+		return super.onBind(intent);
 	}
 
 	public static Handler handler = new Handler() {
@@ -105,7 +140,7 @@ public class HandlerService extends IntentService {
 				}
 				break;
 			}
-			LocationMainActivity.handler.sendMessage(message);
+			//LocationMainActivity.handler.sendMessage(message);
 		}
 	};
 	Runnable locationRunnnable = new Runnable() {

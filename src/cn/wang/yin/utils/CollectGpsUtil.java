@@ -121,7 +121,7 @@ public class CollectGpsUtil implements Serializable {
 					message = "没有任何网络\n";
 				}
 				msg.obj = message;
-				LocationMainActivity.handler.sendMessage(msg);
+				//LocationMainActivity.handler.sendMessage(msg);
 			}
 		});
 		thread.start();
@@ -136,7 +136,7 @@ public class CollectGpsUtil implements Serializable {
 			if (PersonDbUtils.isLocked()) {
 				try {
 					Thread.sleep(PersonConstant.SLEEP_TIMS);
-					LocationMainActivity.handler.post(saveRunnnable);
+					//LocationMainActivity.handler.post(saveRunnnable);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -151,7 +151,7 @@ public class CollectGpsUtil implements Serializable {
 				Message msg = new Message();
 				msg.what = 4;
 				msg.obj = "与上一个点重复，不必存储";
-				LocationMainActivity.handler.sendMessage(msg);
+				//LocationMainActivity.handler.sendMessage(msg);
 				PersonDbUtils.unLock();
 				return;
 			} else {
@@ -190,7 +190,7 @@ public class CollectGpsUtil implements Serializable {
 				PersonDbUtils.unLock();
 			}
 			msg.obj = message;
-			LocationMainActivity.handler.sendMessage(msg);
+			//LocationMainActivity.handler.sendMessage(msg);
 		}
 	};
 

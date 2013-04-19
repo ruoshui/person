@@ -55,7 +55,10 @@ public class PersonConstant {
 			+ " exlocation varchar(100),"
 			+ " phonenum varchar(20),"
 			+ " pruducttime varchar(30));";
-
+	public static final String MSEESGE_REMIND_TICKER = "推送的通知";
+	public static final String MSEESGE_REMIND_CONTENT = "通知内容";
 	public static final String BAIDU_MAP_KEY = "E0D1BCE3141B89DB8A7629D0FF60B9D97495A23D";
+	public static final int COMMON_NOTIFICATION = 1;
+	public static final String API_KEY = "AFUv1Lx0zs7KwgSdHttExFyV";
 
 }
