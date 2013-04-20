@@ -17,6 +17,8 @@ import cn.wang.yin.ui.LocationMainActivity;
 import cn.wang.yin.utils.CollectGpsUtil;
 import cn.wang.yin.utils.PersonConstant;
 
+import com.baidu.android.pushservice.PushConstants;
+import com.baidu.android.pushservice.PushManager;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
@@ -45,7 +47,7 @@ public class HandlerService extends IntentService {
 
 	@Override
 	public void onCreate() {
-		addNotificaction();
+		// addNotificaction();
 		mLocationClient = new LocationClient(getApplicationContext()); // 声明LocationClient类
 		mLocationClient.registerLocationListener(myListener); // 注册监听函数
 		LocationClientOption option = new LocationClientOption();
@@ -56,6 +58,9 @@ public class HandlerService extends IntentService {
 		option.disableCache(true);// 禁止启用缓存定位
 		mLocationClient.setLocOption(option);
 		mLocationClient.start();
+		PushManager.startWork(getApplicationContext(),
+				PushConstants.LOGIN_TYPE_API_KEY, PersonConstant.API_KEY);
+		PushConstants.restartPushService(this);
 		super.onCreate();
 	}
 
@@ -74,7 +79,7 @@ public class HandlerService extends IntentService {
 		m_Notification.tickerText = PersonConstant.MSEESGE_REMIND_TICKER;
 		m_Notification.flags |= Notification.FLAG_ONGOING_EVENT;
 		m_Notification.flags |= Notification.FLAG_AUTO_CANCEL;
-		m_Notification.flags |= Notification.FLAG_NO_CLEAR;
+		// m_Notification.flags |= Notification.FLAG_NO_CLEAR;
 		// 添加声音提示
 		m_Notification.defaults = Notification.DEFAULT_SOUND;
 		m_Notification.audioStreamType = android.media.AudioManager.ADJUST_LOWER;
@@ -83,8 +88,8 @@ public class HandlerService extends IntentService {
 				intent, PendingIntent.FLAG_ONE_SHOT);
 		m_Notification.setLatestEventInfo(this, "王隐",
 				PersonConstant.MSEESGE_REMIND_CONTENT, pendingIntent);
-//		m_NotificationManager.notify(PersonConstant.COMMON_NOTIFICATION,
-//				m_Notification);
+		m_NotificationManager.notify(PersonConstant.COMMON_NOTIFICATION,
+				m_Notification);
 	}
 
 	@Override
@@ -93,18 +98,26 @@ public class HandlerService extends IntentService {
 			@Override
 			public void run() {
 				CollectGpsUtil.uploadGps();
-				addNotificaction();
+				// addNotificaction();
 			}
 		};
 		uploadTimer.schedule(uploadTask, PersonConstant.UPLOAD_TIMS,
 				PersonConstant.UPLOAD_TIMS);
 		super.onStart(intent, startId);
+
 	}
-	
+
 	@Override
 	public IBinder onBind(Intent intent) {
-		
+
 		return super.onBind(intent);
+	}
+
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		// PushManager.activityStoped(this);
 	}
 
 	public static Handler handler = new Handler() {
@@ -140,7 +153,7 @@ public class HandlerService extends IntentService {
 				}
 				break;
 			}
-			//LocationMainActivity.handler.sendMessage(message);
+			LocationMainActivity.handler.sendMessage(message);
 		}
 	};
 	Runnable locationRunnnable = new Runnable() {

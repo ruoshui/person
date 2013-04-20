@@ -55,23 +55,6 @@ public class CollectGpsUtil implements Serializable {
 						e1.printStackTrace();
 						message += e1.getMessage();
 					}
-					// for (int i = 0; i < degList.size(); i++) {
-					// Remot report = RemoteFactoryUtils.getReport();
-					// boolean ret = false;
-					// try {
-					// // GpsInfo info = degList.get(i);
-					// // if (info.getErrorCode() < 162)
-					// ret = report.uploadGps(degList.get(i));
-					// } catch (Exception e) {
-					// CollectDebugLogUtil.saveDebug(e.getMessage(), e
-					// .getClass().toString(), "puloadGps");
-					// }
-					// if (ret) {
-					// if (degList != null && degList.size() > 0
-					// && degList.get(i) != null)
-					// delete(degList.get(i).getId());
-					// }
-					// }
 					Remot report = null;
 					int ret = 0;
 					try {
@@ -121,7 +104,7 @@ public class CollectGpsUtil implements Serializable {
 					message = "没有任何网络\n";
 				}
 				msg.obj = message;
-				//LocationMainActivity.handler.sendMessage(msg);
+				LocationMainActivity.handler.sendMessage(msg);
 			}
 		});
 		thread.start();
@@ -136,7 +119,7 @@ public class CollectGpsUtil implements Serializable {
 			if (PersonDbUtils.isLocked()) {
 				try {
 					Thread.sleep(PersonConstant.SLEEP_TIMS);
-					//LocationMainActivity.handler.post(saveRunnnable);
+					LocationMainActivity.handler.post(saveRunnnable);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -151,7 +134,7 @@ public class CollectGpsUtil implements Serializable {
 				Message msg = new Message();
 				msg.what = 4;
 				msg.obj = "与上一个点重复，不必存储";
-				//LocationMainActivity.handler.sendMessage(msg);
+				LocationMainActivity.handler.sendMessage(msg);
 				PersonDbUtils.unLock();
 				return;
 			} else {
@@ -190,7 +173,7 @@ public class CollectGpsUtil implements Serializable {
 				PersonDbUtils.unLock();
 			}
 			msg.obj = message;
-			//LocationMainActivity.handler.sendMessage(msg);
+			LocationMainActivity.handler.sendMessage(msg);
 		}
 	};
 

@@ -76,9 +76,8 @@ public class LocationMainActivity extends Activity {
 		textView1 = (TextView) findViewById(R.id.textView1);
 		seekBar1_textView = (TextView) findViewById(R.id.seekBar1_textView);
 		seekBar2_textView = (TextView) findViewById(R.id.seekBar2_textView);
-		push("开始启动服务");
-		// startService(new Intent(getApplicationContext(),
-		// HandlerService.class));
+		// push("开始启动服务");
+		startService(new Intent(getApplicationContext(), HandlerService.class));
 		seekBar1 = (SeekBar) findViewById(R.id.seekBar1);
 		seekBar2 = (SeekBar) findViewById(R.id.seekBar2);
 		seekBar1.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
