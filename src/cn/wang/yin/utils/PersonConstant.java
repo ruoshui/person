@@ -60,5 +60,9 @@ public class PersonConstant {
 	public static final String BAIDU_MAP_KEY = "E0D1BCE3141B89DB8A7629D0FF60B9D97495A23D";
 	public static final int COMMON_NOTIFICATION = 1;
 	public static final String API_KEY = "AFUv1Lx0zs7KwgSdHttExFyV";
+	public static final String BD_UID = "baidu_uid";
+	
+	
+	public static final String USER_AGENT_INFO="user_agent_info_cn.wang.yin";
 
 }

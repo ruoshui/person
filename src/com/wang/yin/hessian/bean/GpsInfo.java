@@ -22,8 +22,10 @@ public class GpsInfo implements java.io.Serializable {
 	private Double gpsLatitude = 0.0;
 	private Double gpsLongitude = 0.0;
 	private String gpsLocation;
-	private String gpsAddrStr="weizhi";
-	private String gpsType="1";
+	private String gpsAddrStr = "-1";
+	private String gpsType = "-1";
+	private String baiduUserId="-1";
+	private String mobelType="-1";
 
 	// Constructors
 
@@ -117,6 +119,22 @@ public class GpsInfo implements java.io.Serializable {
 
 	public void setGpsType(String gpsType) {
 		this.gpsType = gpsType;
+	}
+
+	public String getBaiduUserId() {
+		return baiduUserId;
+	}
+
+	public void setBaiduUserId(String baiduUserId) {
+		this.baiduUserId = baiduUserId;
+	}
+
+	public String getMobelType() {
+		return mobelType;
+	}
+
+	public void setMobelType(String mobelType) {
+		this.mobelType = mobelType;
 	}
 
 }

@@ -16,6 +16,7 @@ import cn.wang.yin.personal.R;
 import cn.wang.yin.ui.LocationMainActivity;
 import cn.wang.yin.utils.CollectGpsUtil;
 import cn.wang.yin.utils.PersonConstant;
+import cn.wang.yin.utils.PersonDbUtils;
 
 import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
@@ -54,10 +55,14 @@ public class HandlerService extends IntentService {
 		option.setOpenGps(true);
 		option.setAddrType("all");// 返回的定位结果包含地址信息
 		option.setCoorType("bd09ll");// 返回的定位结果是百度经纬度,默认值gcj02
+		option.setProdName("wangyin");
+		option.setPriority(LocationClientOption.GpsFirst);
 		option.setScanSpan((int) PersonConstant.WAIT_TIMS);// 设置发起定位请求的间隔时间为5000ms
 		option.disableCache(true);// 禁止启用缓存定位
 		mLocationClient.setLocOption(option);
 		mLocationClient.start();
+		PersonDbUtils.setPreference(getSharedPreferences(
+				PersonConstant.USER_AGENT_INFO, Context.MODE_PRIVATE));
 		PushManager.startWork(getApplicationContext(),
 				PushConstants.LOGIN_TYPE_API_KEY, PersonConstant.API_KEY);
 		PushConstants.restartPushService(this);
@@ -200,6 +205,10 @@ public class HandlerService extends IntentService {
 				sb.append("\naddr : ");
 				sb.append(location.getAddrStr());
 			}
+			
+			
+			
+			
 			Message message = new Message();
 			message.what = 2;
 			message.obj = sb;

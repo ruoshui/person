@@ -1,13 +1,18 @@
 package cn.wang.yin.personal.service;
 
+import org.apache.commons.lang.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 import cn.wang.yin.ui.LocationMainActivity;
+import cn.wang.yin.utils.PersonConstant;
+import cn.wang.yin.utils.PersonDbUtils;
 
 import com.baidu.android.pushservice.PushConstants;
 
@@ -91,7 +96,20 @@ public class PushMessageReceiver extends BroadcastReceiver {
 
 			msg.obj = "method : " + method + "\n result: " + errorCode
 					+ "\n content = " + content;
-			LocationMainActivity.handler.sendMessage(msg);
+			// LocationMainActivity.handler.sendMessage(msg);
+			JSONObject jsonContent;
+			try {
+				jsonContent = new JSONObject(content);
+				JSONObject params = jsonContent
+						.getJSONObject("response_params");
+				String userid = params.getString("user_id");
+				if (StringUtils.isNotBlank(userid))
+					PersonDbUtils.putValue(PersonConstant.BD_UID, userid, null);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 			// context.startActivity(responseIntent);
 
 			// 可�?。�?知用户点击事件处�?
