@@ -99,10 +99,10 @@ public class LocationMainActivity extends Activity {
 				if (fromUser) {
 					locationTime = 1000 * progress;
 				}
-				Intent intent = new Intent(
-						"cn.wang.yin.personal.service.PushMessageReceiver");
-				intent.putExtra("tab", 1);
-				sendBroadcast(intent);
+//				Intent intent = new Intent(
+//						"cn.wang.yin.personal.service.PushMessageReceiver");
+//				intent.putExtra("tab", 1);
+//				sendBroadcast(intent);
 				seekBar1_textView.setText("定位间隔为：" + locationTime / 1000 + "秒");
 			}
 		});
@@ -130,9 +130,9 @@ public class LocationMainActivity extends Activity {
 
 			}
 		});
-		PushManager.startWork(getApplicationContext(),
-				PushConstants.LOGIN_TYPE_API_KEY, PersonConstant.API_KEY);
-		PushConstants.restartPushService(this);
+//		PushManager.startWork(getApplicationContext(),
+//				PushConstants.LOGIN_TYPE_API_KEY, PersonConstant.API_KEY);
+//		PushConstants.restartPushService(this);
 	}
 
 	@Override
@@ -294,24 +294,24 @@ public class LocationMainActivity extends Activity {
 	protected void onStart() {
 		// mLocationClient.start();
 		super.onStart();
-		Log.d(TAG, ">=====onStart=====<");
-		Intent recIntent = this.getIntent();
-		String openType = ""
-				+ recIntent.getIntExtra(PushConstants.EXTRA_OPENTYPE, 0);
-		String msgId = recIntent.getStringExtra(PushConstants.EXTRA_MSGID);
-
-		Log.d(TAG,
-				"Collect Activity start feedback info , package:"
-						+ this.getPackageName() + " openType: " + openType
-						+ " msgid: " + msgId);
-
-		PushManager.activityStarted(this);
+//		Log.d(TAG, ">=====onStart=====<");
+//		Intent recIntent = this.getIntent();
+//		String openType = ""
+//				+ recIntent.getIntExtra(PushConstants.EXTRA_OPENTYPE, 0);
+//		String msgId = recIntent.getStringExtra(PushConstants.EXTRA_MSGID);
+//
+//		Log.d(TAG,
+//				"Collect Activity start feedback info , package:"
+//						+ this.getPackageName() + " openType: " + openType
+//						+ " msgid: " + msgId);
+//
+//		PushManager.activityStarted(this);
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
-		PushManager.activityStoped(this);
+	//	PushManager.activityStoped(this);
 	}
 
 }

@@ -161,7 +161,7 @@ public class CollectGpsUtil implements Serializable {
 				long l = 0;
 				try {
 					l = sdb.insert("gps_info", null, initialValues);
-					message = "存储进去了 \t当前数据库索引id为：" + l ;
+					message = "存储进去了 \t当前数据库索引id为：" + l;
 				} catch (Exception e) {
 					PersonDbUtils.unLock();
 					message += "存储异常  \n" + e.getMessage();
@@ -170,8 +170,8 @@ public class CollectGpsUtil implements Serializable {
 
 				}
 				sdb.close();
-				PersonDbUtils.unLock();
 			}
+			PersonDbUtils.unLock();
 			msg.obj = message;
 			LocationMainActivity.handler.sendMessage(msg);
 		}
@@ -220,6 +220,7 @@ public class CollectGpsUtil implements Serializable {
 			sdb.close();
 			PersonDbUtils.unLock();
 		}
+		PersonDbUtils.unLock();
 	}
 
 	/****
@@ -263,11 +264,11 @@ public class CollectGpsUtil implements Serializable {
 			cur.close();
 			db.close();
 			PersonDbUtils.unLock();
-		} catch (Exception e) {
-			PersonDbUtils.unLock();
+		} catch (Exception e) {PersonDbUtils.unLock();
 			CollectDebugLogUtil.saveDebug(e.getMessage(), e.getClass()
 					.toString(), "getAll");
 		}
+		PersonDbUtils.unLock();
 	}
 
 	/****
@@ -301,6 +302,7 @@ public class CollectGpsUtil implements Serializable {
 			CollectDebugLogUtil.saveDebug(e.getMessage(), e.getClass()
 					.toString(), "delete");
 		}
+		PersonDbUtils.unLock();
 		return delete;
 	}
 
