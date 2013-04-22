@@ -3,29 +3,25 @@ package com.wang.yin.hessian.bean;
 import java.util.Date;
 
 /**
- * AbstractGpsInfo entity provides the base persistence definition of the
  * GpsInfo entity. @author MyEclipse Persistence Tools
  */
-
 public class GpsInfo implements java.io.Serializable {
 
 	// Fields
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5053306352218714223L;
 	private Integer id;
 	private Date gpsTime;
 	private Date gpsWriteTime;
-	private Integer errorCode = 1;
-	private Double gpsLatitude = 0.0;
-	private Double gpsLongitude = 0.0;
+	private Integer errorCode;
+	private double gpsLatitude;
+	private double gpsLongitude;
 	private String gpsLocation;
-	private String gpsAddrStr = "-1";
-	private String gpsType = "-1";
-	private String baiduUserId="-1";
-	private String mobelType="-1";
+	private String gpsAddrStr;
+	private String gpsType;
+	private float gpsSpeed;
+	private Integer gpsSatelliteNumber;
+	private float gpsRadius;
+	private String bdUid;
 
 	// Constructors
 
@@ -35,8 +31,9 @@ public class GpsInfo implements java.io.Serializable {
 
 	/** full constructor */
 	public GpsInfo(Date gpsTime, Date gpsWriteTime, Integer errorCode,
-			Double gpsLatitude, Double gpsLongitude, String gpsLocation,
-			String gpsAddrStr, String gpsType) {
+			double gpsLatitude, double gpsLongitude, String gpsLocation,
+			String gpsAddrStr, String gpsType, float gpsSpeed,
+			Integer gpsSatelliteNumber, float gpsRadius, String bdUid) {
 		this.gpsTime = gpsTime;
 		this.gpsWriteTime = gpsWriteTime;
 		this.errorCode = errorCode;
@@ -45,10 +42,13 @@ public class GpsInfo implements java.io.Serializable {
 		this.gpsLocation = gpsLocation;
 		this.gpsAddrStr = gpsAddrStr;
 		this.gpsType = gpsType;
+		this.gpsSpeed = gpsSpeed;
+		this.gpsSatelliteNumber = gpsSatelliteNumber;
+		this.gpsRadius = gpsRadius;
+		this.bdUid = bdUid;
 	}
 
 	// Property accessors
-
 	public Integer getId() {
 		return this.id;
 	}
@@ -81,19 +81,19 @@ public class GpsInfo implements java.io.Serializable {
 		this.errorCode = errorCode;
 	}
 
-	public Double getGpsLatitude() {
+	public double getGpsLatitude() {
 		return this.gpsLatitude;
 	}
 
-	public void setGpsLatitude(Double gpsLatitude) {
+	public void setGpsLatitude(double gpsLatitude) {
 		this.gpsLatitude = gpsLatitude;
 	}
 
-	public Double getGpsLongitude() {
+	public double getGpsLongitude() {
 		return this.gpsLongitude;
 	}
 
-	public void setGpsLongitude(Double gpsLongitude) {
+	public void setGpsLongitude(double gpsLongitude) {
 		this.gpsLongitude = gpsLongitude;
 	}
 
@@ -121,20 +121,36 @@ public class GpsInfo implements java.io.Serializable {
 		this.gpsType = gpsType;
 	}
 
-	public String getBaiduUserId() {
-		return baiduUserId;
+	public float getGpsSpeed() {
+		return this.gpsSpeed;
 	}
 
-	public void setBaiduUserId(String baiduUserId) {
-		this.baiduUserId = baiduUserId;
+	public void setGpsSpeed(float gpsSpeed) {
+		this.gpsSpeed = gpsSpeed;
 	}
 
-	public String getMobelType() {
-		return mobelType;
+	public Integer getGpsSatelliteNumber() {
+		return this.gpsSatelliteNumber;
 	}
 
-	public void setMobelType(String mobelType) {
-		this.mobelType = mobelType;
+	public void setGpsSatelliteNumber(Integer gpsSatelliteNumber) {
+		this.gpsSatelliteNumber = gpsSatelliteNumber;
+	}
+
+	public float getGpsRadius() {
+		return this.gpsRadius;
+	}
+
+	public void setGpsRadius(float gpsRadius) {
+		this.gpsRadius = gpsRadius;
+	}
+
+	public String getBdUid() {
+		return this.bdUid;
+	}
+
+	public void setBdUid(String bdUid) {
+		this.bdUid = bdUid;
 	}
 
 }
