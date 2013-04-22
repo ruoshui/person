@@ -154,10 +154,17 @@ public class CollectGpsUtil implements Serializable {
 				initialValues.put("t_loctype", location.getLocType());
 				initialValues.put("t_latitude", location.getLatitude());
 				initialValues.put("t_lontitude", location.getLongitude());
-				initialValues.put("t_address", location.getAddrStr());
+
 				initialValues.put("t_writetime",
 						PersonStringUtils.pareDateToString(new Date()));
 				initialValues.put("t_radius", location.getRadius());
+				if (location.getLocType() == BDLocation.TypeGpsLocation) {
+					initialValues.put("gpsSpeed", location.getSpeed());
+					initialValues.put("gpsSatelliteNumber",
+							location.getSatelliteNumber());
+				} else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
+					initialValues.put("t_address", location.getAddrStr());
+				}
 				long l = 0;
 				try {
 					l = sdb.insert("gps_info", null, initialValues);
@@ -205,10 +212,17 @@ public class CollectGpsUtil implements Serializable {
 			initialValues.put("t_loctype", location.getLocType());
 			initialValues.put("t_latitude", location.getLatitude());
 			initialValues.put("t_lontitude", location.getLongitude());
-			initialValues.put("t_address", location.getAddrStr());
 			initialValues.put("t_writetime",
 					PersonStringUtils.pareDateToString(new Date()));
 			initialValues.put("t_radius", location.getRadius());
+			if (location.getLocType() == BDLocation.TypeGpsLocation) {
+				initialValues.put("gpsSpeed", location.getSpeed());
+				initialValues.put("gpsSatelliteNumber",
+						location.getSatelliteNumber());
+			} else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
+				initialValues.put("t_address", location.getAddrStr());
+			}
+
 			long l = 0;
 			try {
 				l = sdb.insert("gps_info", null, initialValues);
@@ -243,9 +257,11 @@ public class CollectGpsUtil implements Serializable {
 		try {
 			SQLiteDatabase db = PersonDbUtils.getInstance()
 					.getWritableDatabase();
-			Cursor cur = db.query("gps_info", new String[] { "t_id", "t_time",
-					"t_loctype", "t_latitude", "t_lontitude", "t_address",
-					"t_writetime", "t_radius" }, null, null, null, null, null);
+			Cursor cur = db.query("gps_info",
+					new String[] { "t_id", "t_time", "t_loctype", "t_latitude",
+							"t_lontitude", "t_address", "t_writetime",
+							"t_radius", "gpsSpeed", "gpsSatelliteNumber" },
+					null, null, null, null, null);
 			degList.clear();
 			for (cur.moveToFirst(); !cur.isAfterLast(); cur.moveToNext()) {
 				GpsInfo gps = new GpsInfo();
@@ -259,12 +275,16 @@ public class CollectGpsUtil implements Serializable {
 				gps.setGpsWriteTime(PersonStringUtils.pareStringToDate(cur
 						.getString(6)));
 				gps.setGpsLocation(cur.getString(7));
+				gps.setGpsSpeed(cur.getFloat(8));
+				gps.setGpsSatelliteNumber(cur.getInt(8));
+				gps.setBdUid(PersonDbUtils.getValue(PersonConstant.BD_UID, ""));
 				degList.add(gps);
 			}
 			cur.close();
 			db.close();
 			PersonDbUtils.unLock();
-		} catch (Exception e) {PersonDbUtils.unLock();
+		} catch (Exception e) {
+			PersonDbUtils.unLock();
 			CollectDebugLogUtil.saveDebug(e.getMessage(), e.getClass()
 					.toString(), "getAll");
 		}

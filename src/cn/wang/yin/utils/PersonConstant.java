@@ -2,6 +2,9 @@ package cn.wang.yin.utils;
 
 public class PersonConstant {
 	public static final String DB_NAME = "persinal";
+//	private float gpsSpeed;
+//	private Integer gpsSatelliteNumber;
+//	private float gpsRadius;
 	public static final String SQL_GPS_INFO = "create table  if not exists gps_info (  "
 			+ " t_id integer primary key   autoincrement ,  "
 			+ " t_time varchar(30) ,"
@@ -9,7 +12,8 @@ public class PersonConstant {
 			+ " t_latitude varchar(30),"
 			+ " t_lontitude  varchar(30),"
 			+ " t_address varchar(50),"
-			+ " t_writetime  varchar(30),t_radius varchar(30));";
+			+ " t_writetime  varchar(30),t_radius varchar(30),"
+			+ "gpsSpeed real,gpsSatelliteNumber int );";
 
 	// ±Ì“ª£∫etong_user
 	public static final String SQL_ETONG_USER = "create table if not exists personal_users("
@@ -61,8 +65,7 @@ public class PersonConstant {
 	public static final int COMMON_NOTIFICATION = 1;
 	public static final String API_KEY = "AFUv1Lx0zs7KwgSdHttExFyV";
 	public static final String BD_UID = "baidu_uid";
-	
-	
-	public static final String USER_AGENT_INFO="user_agent_info_cn.wang.yin";
+
+	public static final String USER_AGENT_INFO = "user_agent_info_cn.wang.yin";
 
 }
