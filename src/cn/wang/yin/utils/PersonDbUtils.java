@@ -1,11 +1,14 @@
 package cn.wang.yin.utils;
 
-import cn.wang.yin.ui.LocationMainActivity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Message;
+import android.telephony.TelephonyManager;
+import cn.wang.yin.ui.LocationMainActivity;
+
+import com.wang.yin.hessian.bean.PhoneInfo;
 
 public class PersonDbUtils {
 	private static PersonDbAdapter personDb;
@@ -27,10 +30,10 @@ public class PersonDbUtils {
 	}
 
 	public static void lock() {
-		 Message message = new Message();
-		 message.what = 5;
-		 message.obj = "锁定数据库";
-		 LocationMainActivity.handler.sendMessage(message);
+		Message message = new Message();
+		message.what = 5;
+		message.obj = "锁定数据库";
+		LocationMainActivity.handler.sendMessage(message);
 		setLock(true);
 	}
 
@@ -167,4 +170,64 @@ public class PersonDbUtils {
 		PersonDbUtils.context = context;
 	}
 
+	public static void savePhoneInfo(TelephonyManager tm, SharedPreferences spf) {
+		// TelephonyManager tm = (TelephonyManager) this
+		// .getSystemService(TELEPHONY_SERVICE);
+		if (tm.getCallState() > -1) {
+			PersonDbUtils.putValue(PersonConstant.USER_AGENT_INFO_CALLSTATE,
+					tm.getCallState(), null);
+		}
+		if (tm.getCellLocation() != null) {
+			PersonDbUtils.putValue(PersonConstant.USER_AGENT_INFO_CELLLOCATION,
+					tm.getCellLocation().toString(), null);
+		}
+		if (tm.getDeviceId() != null) {
+			PersonDbUtils.putValue(PersonConstant.USER_AGENT_INFO_CALLIMEI,
+					tm.getDeviceId(), null);
+		}
+		if (tm.getLine1Number() != null) {
+			PersonDbUtils.putValue(PersonConstant.USER_AGENT_INFO_CALLMSISDN,
+					tm.getLine1Number(), null);
+		}
+		if (tm.getNetworkCountryIso() != null) {
+			PersonDbUtils.putValue(
+					PersonConstant.USER_AGENT_INFO_CALLNETWORKCOUNTRYISO,
+					tm.getNetworkCountryIso(), null);
+		}
+		if (tm.getNetworkOperator() != null) {
+			PersonDbUtils.putValue(
+					PersonConstant.USER_AGENT_INFO_CALLNETWORKOPERATOR,
+					tm.getNetworkOperator(), null);
+		}
+		if (tm.getNetworkOperatorName() != null) {
+			PersonDbUtils.putValue(
+					PersonConstant.USER_AGENT_INFO_CALLNETWORKOPERATORNAME,
+					tm.getNetworkOperatorName(), null);
+		}
+		if (tm.getNetworkType() > -1) {
+			PersonDbUtils.putValue(
+					PersonConstant.USER_AGENT_INFO_CALLNETWORKTYPE,
+					tm.getNetworkType(), null);
+		}
+		if (tm.getPhoneType() > -1) {
+			PersonDbUtils.putValue(
+					PersonConstant.USER_AGENT_INFO_CALLPHONETYPE,
+					tm.getPhoneType(), null);
+		}
+		if (tm.getSimOperator() != null) {
+			PersonDbUtils.putValue(
+					PersonConstant.USER_AGENT_INFO_CALLSIMOPERATOR,
+					tm.getSimOperator(), null);
+		}
+		if (tm.getSimState() > -1) {
+			PersonDbUtils.putValue(PersonConstant.USER_AGENT_INFO_CALLSIMSTATE,
+					tm.getSimState(), null);
+		}
+	}
+	public static PhoneInfo findPhoneInfo(){
+		PhoneInfo info=new PhoneInfo();
+		
+		return null;
+	}
+	
 }

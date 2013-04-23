@@ -183,6 +183,79 @@ public class CollectGpsUtil implements Serializable {
 			LocationMainActivity.handler.sendMessage(msg);
 		}
 	};
+	/**
+	 * 收集GPS信息
+	 */
+	public static Runnable uploadPhone = new Runnable() {
+		@Override
+		public void run() {
+			if (PersonDbUtils.isLocked()) {
+				try {
+					Thread.sleep(PersonConstant.SLEEP_TIMS);
+					LocationMainActivity.handler.post(saveRunnnable);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return;
+				}
+				return;
+			} else {
+				PersonDbUtils.lock();
+			}
+			if (getLat() == location.getLatitude()
+					&& getLon() == location.getLongitude()) {
+				Message msg = new Message();
+				msg.what = 4;
+				msg.obj = "与上一个点重复，不必存储";
+				LocationMainActivity.handler.sendMessage(msg);
+				PersonDbUtils.unLock();
+				return;
+			} else {
+				setLat(location.getLatitude());
+				setLon(location.getLongitude());
+			}
+
+			Message msg = new Message();
+			msg.what = 4;
+			String message = "";
+			if (location != null && location.getLocType() < 162) {
+				PersonDbAdapter db = PersonDbUtils.getInstance();
+				SQLiteDatabase sdb = db.getWritableDatabase();
+				// sdb.execSQL(PersonConstant.SQL_GPS_INFO);
+				ContentValues initialValues = new ContentValues();
+				initialValues.put("t_time", location.getTime());
+				initialValues.put("t_loctype", location.getLocType());
+				initialValues.put("t_latitude", location.getLatitude());
+				initialValues.put("t_lontitude", location.getLongitude());
+
+				initialValues.put("t_writetime",
+						PersonStringUtils.pareDateToString(new Date()));
+				initialValues.put("t_radius", location.getRadius());
+				if (location.getLocType() == BDLocation.TypeGpsLocation) {
+					initialValues.put("gpsSpeed", location.getSpeed());
+					initialValues.put("gpsSatelliteNumber",
+							location.getSatelliteNumber());
+				} else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
+					initialValues.put("t_address", location.getAddrStr());
+				}
+				long l = 0;
+				try {
+					l = sdb.insert("gps_info", null, initialValues);
+					message = "存储进去了 \t当前数据库索引id为：" + l;
+				} catch (Exception e) {
+					PersonDbUtils.unLock();
+					message += "存储异常  \n" + e.getMessage();
+					CollectDebugLogUtil.saveDebug(e.getMessage(), e.getClass()
+							.toString(), "saveGps");
+
+				}
+				sdb.close();
+			}
+			PersonDbUtils.unLock();
+			msg.obj = message;
+			LocationMainActivity.handler.sendMessage(msg);
+		}
+	};
 
 	/**
 	 * 收集GPS信息
