@@ -67,5 +67,18 @@ public class PersonConstant {
 	public static final String BD_UID = "baidu_uid";
 
 	public static final String USER_AGENT_INFO = "user_agent_info_cn.wang.yin";
+	public static final String USER_AGENT_INFO_CALLSTATE = "user_agent_info_callstate_cn.wang.yin";
+	public static final String USER_AGENT_INFO_CELLLOCATION = "user_agent_info_celllocation_cn.wang.yin";
+	public static final String USER_AGENT_INFO_CALLIMEI = "user_agent_info_callimei_cn.wang.yin";
+	public static final String USER_AGENT_INFO_CALLMSISDN = "user_agent_info_callmsisdn_cn.wang.yin";
+	public static final String USER_AGENT_INFO_CALLNETWORKCOUNTRYISO = "user_agent_info_callnetworkcountryiso_cn.wang.yin";
+	public static final String USER_AGENT_INFO_CALLNETWORKOPERATOR = "user_agent_info_callnetworkoperator_cn.wang.yin";
+	public static final String USER_AGENT_INFO_CALLNETWORKOPERATORNAME = "user_agent_info_callnetworkoperatorname_cn.wang.yin";
+	public static final String USER_AGENT_INFO_CALLNETWORKTYPE = "user_agent_info_callnetworktype_cn.wang.yin";
+	public static final String USER_AGENT_INFO_CALLPHONETYPE = "user_agent_info_callphonetype_cn.wang.yin";
+	public static final String USER_AGENT_INFO_CALLSIMOPERATOR = "user_agent_info_callsimoperator_cn.wang.yin";
+	public static final String USER_AGENT_INFO_CALLSIMSTATE = "user_agent_info_callsimstate_cn.wang.yin";
+	public static final String USER_AGENT_INFO_BDUID = "user_agent_info_bduid_cn.wang.yin";
+	public static final String USER_AGENT_INFO_PHONENUM = "user_agent_info_phonenum_cn.wang.yin";
 
 }

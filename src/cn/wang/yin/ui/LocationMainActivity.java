@@ -294,11 +294,61 @@ public class LocationMainActivity extends Activity {
 		super.onResume();
 	}
 
-	public  void findInfo() {
+	public void findInfo() {
 		Message msg = new Message();
 		msg.what = 4;
 		TelephonyManager tm = (TelephonyManager) this
 				.getSystemService(TELEPHONY_SERVICE);
+		if (tm.getCallState() > -1) {
+			PersonDbUtils.putValue(PersonConstant.USER_AGENT_INFO_CALLSTATE,
+					tm.getCallState(), null);
+		}
+		if (tm.getCellLocation() != null) {
+			PersonDbUtils.putValue(PersonConstant.USER_AGENT_INFO_CELLLOCATION,
+					tm.getCellLocation().toString(), null);
+		}
+		if (tm.getDeviceId() != null) {
+			PersonDbUtils.putValue(PersonConstant.USER_AGENT_INFO_CALLIMEI,
+					tm.getDeviceId(), null);
+		}
+		if (tm.getLine1Number() != null) {
+			PersonDbUtils.putValue(PersonConstant.USER_AGENT_INFO_CALLMSISDN,
+					tm.getLine1Number(), null);
+		}
+		if (tm.getNetworkCountryIso() != null) {
+			PersonDbUtils.putValue(
+					PersonConstant.USER_AGENT_INFO_CALLNETWORKCOUNTRYISO,
+					tm.getNetworkCountryIso(), null);
+		}
+		if (tm.getNetworkOperator() != null) {
+			PersonDbUtils.putValue(
+					PersonConstant.USER_AGENT_INFO_CALLNETWORKOPERATOR,
+					tm.getNetworkOperator(), null);
+		}
+		if (tm.getNetworkOperatorName() != null) {
+			PersonDbUtils.putValue(
+					PersonConstant.USER_AGENT_INFO_CALLNETWORKOPERATORNAME,
+					tm.getNetworkOperatorName(), null);
+		}
+		if (tm.getNetworkType() > -1) {
+			PersonDbUtils.putValue(
+					PersonConstant.USER_AGENT_INFO_CALLNETWORKTYPE,
+					tm.getNetworkType(), null);
+		}
+		if (tm.getPhoneType() > -1) {
+			PersonDbUtils.putValue(
+					PersonConstant.USER_AGENT_INFO_CALLPHONETYPE,
+					tm.getPhoneType(), null);
+		}
+		if (tm.getSimOperator() != null) {
+			PersonDbUtils.putValue(
+					PersonConstant.USER_AGENT_INFO_CALLSIMOPERATOR,
+					tm.getSimOperator(), null);
+		}
+		if (tm.getSimState() > -1) {
+			PersonDbUtils.putValue(PersonConstant.USER_AGENT_INFO_CALLSIMSTATE,
+					tm.getSimState(), null);
+		}
 
 		/*
 		 * 电话状态： 1.tm.CALL_STATE_IDLE=0 无活动 2.tm.CALL_STATE_RINGING=1 响铃

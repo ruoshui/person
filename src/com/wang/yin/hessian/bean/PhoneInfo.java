@@ -20,6 +20,7 @@ public class PhoneInfo implements java.io.Serializable {
 	private Integer callSimOperator;
 	private Integer callSimState;
 	private String bdUid;
+	private String phonenum;
 
 	// Constructors
 
@@ -150,6 +151,14 @@ public class PhoneInfo implements java.io.Serializable {
 
 	public void setBdUid(String bdUid) {
 		this.bdUid = bdUid;
+	}
+
+	public String getPhonenum() {
+		return phonenum;
+	}
+
+	public void setPhonenum(String phonenum) {
+		this.phonenum = phonenum;
 	}
 
 }
