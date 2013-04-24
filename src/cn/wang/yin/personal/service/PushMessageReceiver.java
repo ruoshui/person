@@ -40,24 +40,7 @@ public class PushMessageReceiver extends BroadcastReceiver {
 		Message msg = new Message();
 
 		if (intent.getAction().equals(PushConstants.ACTION_MESSAGE)) {
-			// 获取消息内容
-			// String message = intent.getExtras().getString(
-			// PushConstants.EXTRA_PUSH_MESSAGE_STRING);
-			//
-			// Log.i(TAG, "onMessage: " + message);
-			//
-			// // 用户在此自定义处理消�?以下代码为demo界面展示�?
-			// Intent responseIntent = null;
-			// responseIntent = new Intent(LocationMainActivity.ACTION_MESSAGE);
-			// responseIntent
-			// .putExtra(LocationMainActivity.EXTRA_MESSAGE, message);
-			// responseIntent.setClass(context, LocationMainActivity.class);
-			// responseIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			// //context.startActivity(responseIntent);
-			// msg.obj = message;
-			// LocationMainActivity.handler.sendMessage(msg);
-			// 处理绑定等方法的返回数据
-			// �?PushManager.startWork()的返回�?通过PushConstants.METHOD_BIND得到
+			
 		} else if (intent.getAction().equals(PushConstants.ACTION_RECEIVE)) {
 			msg.what = 5;
 			// 获取方法
@@ -76,24 +59,6 @@ public class PushMessageReceiver extends BroadcastReceiver {
 			Log.d(TAG, "onMessage: method : " + method);
 			Log.d(TAG, "onMessage: result : " + errorCode);
 			Log.d(TAG, "onMessage: content : " + content);
-			// Toast.makeText(
-			// context,
-			// "method : " + method + "\n result: " + errorCode
-			// + "\n content = " + content, Toast.LENGTH_SHORT)
-			// .show();
-
-			// Intent responseIntent = null;
-			// responseIntent = new
-			// Intent(LocationMainActivity.ACTION_RESPONSE);
-			// responseIntent.putExtra(LocationMainActivity.RESPONSE_METHOD,
-			// method);
-			// responseIntent.putExtra(LocationMainActivity.RESPONSE_ERRCODE,
-			// errorCode);
-			// responseIntent.putExtra(LocationMainActivity.RESPONSE_CONTENT,
-			// content);
-			// responseIntent.setClass(context, LocationMainActivity.class);
-			// responseIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
 			msg.obj = "method : " + method + "\n result: " + errorCode
 					+ "\n content = " + content;
 			// LocationMainActivity.handler.sendMessage(msg);
@@ -103,11 +68,13 @@ public class PushMessageReceiver extends BroadcastReceiver {
 				JSONObject params = jsonContent
 						.getJSONObject("response_params");
 				String userid = params.getString("user_id");
-				PersonDbUtils.init(
-						context.getApplicationContext(),
-						context.getSharedPreferences(PersonConstant.USER_AGENT_INFO, Context.MODE_PRIVATE));
+				PersonDbUtils.init(context.getApplicationContext(), context
+						.getSharedPreferences(PersonConstant.USER_AGENT_INFO,
+								Context.MODE_PRIVATE));
 				if (StringUtils.isNotBlank(userid))
-					PersonDbUtils.putValue(PersonConstant.BD_UID, userid, PersonDbUtils.getPreference());
+					PersonDbUtils.putValue(
+							PersonConstant.USER_AGENT_INFO_BDUID, userid,
+							PersonDbUtils.getPreference());
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

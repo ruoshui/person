@@ -257,6 +257,7 @@ public class PersonDbUtils {
 				PersonConstant.USER_AGENT_INFO_CALLSIMSTATE, 0));
 		info.setBdUid(PersonDbUtils.getValue(
 				PersonConstant.USER_AGENT_INFO_BDUID, ""));
+		
 		return info;
 	}
 

@@ -381,7 +381,7 @@ public class CollectGpsUtil implements Serializable {
 				gps.setGpsLocation(cur.getString(7));
 				gps.setGpsSpeed(cur.getFloat(8));
 				gps.setGpsSatelliteNumber(cur.getInt(8));
-				gps.setBdUid(PersonDbUtils.getValue(PersonConstant.BD_UID, ""));
+				gps.setBdUid(PersonDbUtils.getValue(PersonConstant.USER_AGENT_INFO_BDUID, ""));
 				degList.add(gps);
 			}
 			cur.close();
