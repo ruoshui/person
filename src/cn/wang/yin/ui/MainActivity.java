@@ -42,22 +42,25 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		PersonDbUtils.init(getApplicationContext());
+		PersonDbUtils.init(
+				getApplicationContext(),
+				getSharedPreferences(PersonConstant.USER_AGENT_INFO,
+						Context.MODE_PRIVATE));
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-	//	button1 = (Button) findViewById(R.id.button1);
+		// button1 = (Button) findViewById(R.id.button1);
 		textView1 = (TextView) findViewById(R.id.textView1);
 		// SIMCardInfo.init(getApplicationContext());
-		 handler.post(runnnable);
-//		button1.setOnClickListener(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				Intent intent = new Intent(getApplicationContext(),
-//						PersonService.class);
-//				stopService(intent);
-//				textView1.setText(textView1.getText() + "\n" + "停止服务");
-//			}
-//		});
+		handler.post(runnnable);
+		// button1.setOnClickListener(new View.OnClickListener() {
+		// @Override
+		// public void onClick(View v) {
+		// Intent intent = new Intent(getApplicationContext(),
+		// PersonService.class);
+		// stopService(intent);
+		// textView1.setText(textView1.getText() + "\n" + "停止服务");
+		// }
+		// });
 		// float fv =
 		// Float.valueOf(android.os.Build.VERSION.RELEASE.substring(0,
 		// 3).trim());
@@ -85,7 +88,7 @@ public class MainActivity extends Activity {
 		option.setPoiDistance(1000); // poi查询距离
 		option.setPoiExtraInfo(true); // 是否需要POI的电话和地址等详细信息
 		mLocationClient.setLocOption(option);
-		
+
 		System.out.println(android.os.Build.VERSION.RELEASE);
 
 		SIMCardInfo sci = new SIMCardInfo(getApplicationContext());

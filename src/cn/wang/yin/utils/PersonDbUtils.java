@@ -17,9 +17,12 @@ public class PersonDbUtils {
 
 	private static boolean lock = false;
 
-	public static void init(Context ctx) {
+	public static void init(Context ctx, SharedPreferences pre) {
 		if (ctx != null) {
 			context = ctx;
+		}
+		if (pre != null) {
+			preference = pre;
 		}
 		getInstance();
 		SQLiteDatabase sdb = personDb.getWritableDatabase();
@@ -74,7 +77,7 @@ public class PersonDbUtils {
 
 	public static boolean putValue(String key, String value,
 			SharedPreferences pre) {
-		if (preference == null) {
+		if (pre != null) {
 			preference = pre;
 		}
 		Editor editor = preference.edit();
@@ -85,7 +88,7 @@ public class PersonDbUtils {
 
 	public static boolean putValue(String key, boolean value,
 			SharedPreferences pre) {
-		if (preference == null) {
+		if (pre != null) {
 			preference = pre;
 		}
 		Editor editor = preference.edit();
@@ -96,7 +99,7 @@ public class PersonDbUtils {
 
 	public static boolean putValue(String key, float value,
 			SharedPreferences pre) {
-		if (preference == null) {
+		if (pre != null) {
 			preference = pre;
 		}
 		Editor editor = preference.edit();
@@ -107,7 +110,7 @@ public class PersonDbUtils {
 
 	public static boolean putValue(String key, double value,
 			SharedPreferences pre) {
-		if (preference == null) {
+		if (pre != null) {
 			preference = pre;
 		}
 		Editor editor = preference.edit();
@@ -117,7 +120,7 @@ public class PersonDbUtils {
 	}
 
 	public static boolean putValue(String key, int value, SharedPreferences pre) {
-		if (preference == null) {
+		if (pre != null) {
 			preference = pre;
 		}
 		Editor editor = preference.edit();
@@ -127,7 +130,7 @@ public class PersonDbUtils {
 	}
 
 	public static boolean putValue(String key, long value, SharedPreferences pre) {
-		if (preference == null) {
+		if (pre != null) {
 			preference = pre;
 		}
 		Editor editor = preference.edit();
@@ -175,59 +178,86 @@ public class PersonDbUtils {
 		// .getSystemService(TELEPHONY_SERVICE);
 		if (tm.getCallState() > -1) {
 			PersonDbUtils.putValue(PersonConstant.USER_AGENT_INFO_CALLSTATE,
-					tm.getCallState(), null);
+					tm.getCallState(), spf);
 		}
 		if (tm.getCellLocation() != null) {
 			PersonDbUtils.putValue(PersonConstant.USER_AGENT_INFO_CELLLOCATION,
-					tm.getCellLocation().toString(), null);
+					tm.getCellLocation().toString(), spf);
 		}
 		if (tm.getDeviceId() != null) {
 			PersonDbUtils.putValue(PersonConstant.USER_AGENT_INFO_CALLIMEI,
-					tm.getDeviceId(), null);
+					tm.getDeviceId(), spf);
 		}
 		if (tm.getLine1Number() != null) {
 			PersonDbUtils.putValue(PersonConstant.USER_AGENT_INFO_CALLMSISDN,
-					tm.getLine1Number(), null);
+					tm.getLine1Number(), spf);
 		}
 		if (tm.getNetworkCountryIso() != null) {
 			PersonDbUtils.putValue(
 					PersonConstant.USER_AGENT_INFO_CALLNETWORKCOUNTRYISO,
-					tm.getNetworkCountryIso(), null);
+					tm.getNetworkCountryIso(), spf);
 		}
 		if (tm.getNetworkOperator() != null) {
 			PersonDbUtils.putValue(
 					PersonConstant.USER_AGENT_INFO_CALLNETWORKOPERATOR,
-					tm.getNetworkOperator(), null);
+					tm.getNetworkOperator(), spf);
 		}
 		if (tm.getNetworkOperatorName() != null) {
 			PersonDbUtils.putValue(
 					PersonConstant.USER_AGENT_INFO_CALLNETWORKOPERATORNAME,
-					tm.getNetworkOperatorName(), null);
+					tm.getNetworkOperatorName(), spf);
 		}
 		if (tm.getNetworkType() > -1) {
 			PersonDbUtils.putValue(
 					PersonConstant.USER_AGENT_INFO_CALLNETWORKTYPE,
-					tm.getNetworkType(), null);
+					tm.getNetworkType(), spf);
 		}
 		if (tm.getPhoneType() > -1) {
 			PersonDbUtils.putValue(
 					PersonConstant.USER_AGENT_INFO_CALLPHONETYPE,
-					tm.getPhoneType(), null);
+					tm.getPhoneType(), spf);
 		}
 		if (tm.getSimOperator() != null) {
 			PersonDbUtils.putValue(
 					PersonConstant.USER_AGENT_INFO_CALLSIMOPERATOR,
-					tm.getSimOperator(), null);
+					tm.getSimOperator(), spf);
 		}
 		if (tm.getSimState() > -1) {
 			PersonDbUtils.putValue(PersonConstant.USER_AGENT_INFO_CALLSIMSTATE,
-					tm.getSimState(), null);
+					tm.getSimState(), spf);
+		}
+		if (PersonDbUtils.getValue(PersonConstant.USER_AGENT_UPLOADED, false)) {
+			PersonDbUtils.putValue(PersonConstant.USER_AGENT_UPLOADED, true,spf);
 		}
 	}
-	public static PhoneInfo findPhoneInfo(){
-		PhoneInfo info=new PhoneInfo();
-		
-		return null;
+
+	public static PhoneInfo findPhoneInfo() {
+		PhoneInfo info = new PhoneInfo();
+		info.setCallState(PersonDbUtils.getValue(
+				PersonConstant.USER_AGENT_INFO_CALLSTATE, 0));
+		info.setCellLocation(PersonDbUtils.getValue(
+				PersonConstant.USER_AGENT_INFO_CELLLOCATION, ""));
+		info.setCallImei(PersonDbUtils.getValue(
+				PersonConstant.USER_AGENT_INFO_CALLIMEI, ""));
+		info.setCallMsisdn(PersonDbUtils.getValue(
+				PersonConstant.USER_AGENT_INFO_CALLMSISDN, ""));
+		info.setCallNetworkCountryIso(PersonDbUtils.getValue(
+				PersonConstant.USER_AGENT_INFO_CALLNETWORKCOUNTRYISO, ""));
+		info.setCallNetworkOperator(PersonDbUtils.getValue(
+				PersonConstant.USER_AGENT_INFO_CALLNETWORKOPERATOR, ""));
+		info.setCallNetworkOperatorName(PersonDbUtils.getValue(
+				PersonConstant.USER_AGENT_INFO_CALLNETWORKOPERATORNAME, ""));
+		info.setCallNetworkType(PersonDbUtils.getValue(
+				PersonConstant.USER_AGENT_INFO_CALLNETWORKTYPE, 0));
+		info.setCallPhoneType(PersonDbUtils.getValue(
+				PersonConstant.USER_AGENT_INFO_CALLPHONETYPE, 0));
+		info.setCallSimOperator(PersonDbUtils.getValue(
+				PersonConstant.USER_AGENT_INFO_CALLSIMOPERATOR, ""));
+		info.setCallSimState(PersonDbUtils.getValue(
+				PersonConstant.USER_AGENT_INFO_CALLSIMSTATE, 0));
+		info.setBdUid(PersonDbUtils.getValue(
+				PersonConstant.USER_AGENT_INFO_BDUID, ""));
+		return info;
 	}
-	
+
 }

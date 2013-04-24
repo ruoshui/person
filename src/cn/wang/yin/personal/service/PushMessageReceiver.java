@@ -103,8 +103,11 @@ public class PushMessageReceiver extends BroadcastReceiver {
 				JSONObject params = jsonContent
 						.getJSONObject("response_params");
 				String userid = params.getString("user_id");
+				PersonDbUtils.init(
+						context.getApplicationContext(),
+						context.getSharedPreferences(PersonConstant.USER_AGENT_INFO, Context.MODE_PRIVATE));
 				if (StringUtils.isNotBlank(userid))
-					PersonDbUtils.putValue(PersonConstant.BD_UID, userid, null);
+					PersonDbUtils.putValue(PersonConstant.BD_UID, userid, PersonDbUtils.getPreference());
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

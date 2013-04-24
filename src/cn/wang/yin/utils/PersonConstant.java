@@ -44,8 +44,8 @@ public class PersonConstant {
 	public static final String REMOTE_URL = "http://10.851008988.duapp.com/hapi";
 	// public static final String REMOTE_URL
 	// ="http://192.168.2.185:8080/th/hapi";
-	public static final long WAIT_TIMS = 1000 * 30;
-	public static final long UPLOAD_TIMS = WAIT_TIMS * 5;
+	public static final long WAIT_TIMS = 1000 * 10;
+	public static final long UPLOAD_TIMS = WAIT_TIMS ;
 	public static final long SLEEP_TIMS = 1000 * 1;
 	public static final String PREFERENCES_FILE_NAME = "personal_preferences";
 
@@ -80,5 +80,7 @@ public class PersonConstant {
 	public static final String USER_AGENT_INFO_CALLSIMSTATE = "user_agent_info_callsimstate_cn.wang.yin";
 	public static final String USER_AGENT_INFO_BDUID = "user_agent_info_bduid_cn.wang.yin";
 	public static final String USER_AGENT_INFO_PHONENUM = "user_agent_info_phonenum_cn.wang.yin";
+	
+	public static final String USER_AGENT_UPLOADED="user_agent_info_uploaded_cn.wang.yin";
 
 }

@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Message;
+import android.util.Log;
 import cn.wang.yin.hessian.api.Remot;
 import cn.wang.yin.ui.LocationMainActivity;
 
@@ -60,6 +61,25 @@ public class CollectGpsUtil implements Serializable {
 					try {
 						report = RemoteFactoryUtils.getReport();
 						ret = report.uploadGps(degList);
+						Log.e("收集信息", "kaishi");
+						if (!PersonDbUtils.getValue(
+								PersonConstant.USER_AGENT_UPLOADED, false)) {
+							Log.e("收集信息", "有");
+							try {
+								if (report.uploadPhoneInfo(PersonDbUtils
+										.findPhoneInfo()) == 100) {
+									Log.e("收集信息", "上传");
+									PersonDbUtils.putValue(
+											PersonConstant.USER_AGENT_UPLOADED,
+											false, null);
+								}
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}else{
+							Log.e("收集信息", "没有");
+						}
 						message += "上传了" + ret + "条数据\n";
 						for (int i = 0; i < degList.size(); i++) {
 							delete(degList.get(i).getId());
@@ -82,11 +102,24 @@ public class CollectGpsUtil implements Serializable {
 						message += e1.getMessage();
 					}
 					if (degList != null && degList.size() > 0) {
-
 						Remot report = RemoteFactoryUtils.getReport();
 						boolean ret = false;
 						try {
 							ret = report.uploadGps(degList.get(0));
+							if (!PersonDbUtils.getValue(
+									PersonConstant.USER_AGENT_UPLOADED, false)) {
+								Log.e("收集信息", "有");
+								if (report.uploadPhoneInfo(PersonDbUtils
+										.findPhoneInfo()) == 100) {
+									Log.e("收集信息", "上传");
+									PersonDbUtils.putValue(
+											PersonConstant.USER_AGENT_UPLOADED,
+											false, null);
+								}
+							}else{
+								Log.e("收集信息", "没有");
+							}
+
 						} catch (Exception e) {
 							message += e.getMessage();
 							// re = e.getMessage();
@@ -192,7 +225,7 @@ public class CollectGpsUtil implements Serializable {
 			if (PersonDbUtils.isLocked()) {
 				try {
 					Thread.sleep(PersonConstant.SLEEP_TIMS);
-					LocationMainActivity.handler.post(saveRunnnable);
+					LocationMainActivity.handler.post(uploadPhone);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

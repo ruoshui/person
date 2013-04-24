@@ -1,8 +1,8 @@
 package cn.wang.yin.personal.service;
 
 //--------------------------------- IMPORTS ------------------------------------
-import android.app.KeyguardManager;
-import android.app.KeyguardManager.KeyguardLock;
+import cn.wang.yin.utils.PersonConstant;
+import cn.wang.yin.utils.PersonDbUtils;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +26,9 @@ public class BootupReceiver extends BroadcastReceiver {
 		Intent inten = new Intent(context, HandlerService.class);
 		inten.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.startService(inten);
+		PersonDbUtils.init(context.getApplicationContext(), context
+				.getSharedPreferences(PersonConstant.USER_AGENT_INFO,
+						Context.MODE_PRIVATE));
 
 	}
 

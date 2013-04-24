@@ -17,7 +17,7 @@ public class PhoneInfo implements java.io.Serializable {
 	private String callNetworkOperatorName;
 	private Integer callNetworkType;
 	private Integer callPhoneType;
-	private Integer callSimOperator;
+	private String callSimOperator;
 	private Integer callSimState;
 	private String bdUid;
 	private String phonenum;
@@ -33,7 +33,7 @@ public class PhoneInfo implements java.io.Serializable {
 			String callMsisdn, String callNetworkCountryIso,
 			String callNetworkOperator, String callNetworkOperatorName,
 			Integer callNetworkType, Integer callPhoneType,
-			Integer callSimOperator, Integer callSimState, String bdUid) {
+			String callSimOperator, Integer callSimState, String bdUid) {
 		this.callState = callState;
 		this.cellLocation = cellLocation;
 		this.callImei = callImei;
@@ -129,11 +129,11 @@ public class PhoneInfo implements java.io.Serializable {
 		this.callPhoneType = callPhoneType;
 	}
 
-	public Integer getCallSimOperator() {
-		return this.callSimOperator;
+	public String getCallSimOperator() {
+		return callSimOperator;
 	}
 
-	public void setCallSimOperator(Integer callSimOperator) {
+	public void setCallSimOperator(String callSimOperator) {
 		this.callSimOperator = callSimOperator;
 	}
 

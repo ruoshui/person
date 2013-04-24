@@ -76,10 +76,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
-
-        
-        
-        
         
         <!-- push service client -->
         <receiver android:name="cn.wang.yin.personal.service.PushMessageReceiver" >

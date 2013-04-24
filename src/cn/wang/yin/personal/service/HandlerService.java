@@ -3,15 +3,23 @@ package cn.wang.yin.personal.service;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.apache.commons.lang.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.app.AlertDialog;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 import cn.wang.yin.personal.R;
 import cn.wang.yin.ui.LocationMainActivity;
 import cn.wang.yin.utils.CollectGpsUtil;
@@ -49,16 +57,16 @@ public class HandlerService extends IntentService {
 	@Override
 	public void onCreate() {
 		// addNotificaction();
-		mLocationClient = new LocationClient(getApplicationContext()); // ÉùÃ÷LocationClientÀà
-		mLocationClient.registerLocationListener(myListener); // ×¢²á¼àÌıº¯Êı
+		mLocationClient = new LocationClient(getApplicationContext()); // å£°æ˜LocationClientç±»
+		mLocationClient.registerLocationListener(myListener); // æ³¨å†Œç›‘å¬å‡½æ•°
 		LocationClientOption option = new LocationClientOption();
 		option.setOpenGps(true);
-		option.setAddrType("all");// ·µ»ØµÄ¶¨Î»½á¹û°üº¬µØÖ·ĞÅÏ¢
-		option.setCoorType("bd09ll");// ·µ»ØµÄ¶¨Î»½á¹ûÊÇ°Ù¶È¾­Î³¶È,Ä¬ÈÏÖµgcj02
+		option.setAddrType("all");// è¿”å›çš„å®šä½ç»“æœåŒ…å«åœ°å€ä¿¡æ¯
+		option.setCoorType("bd09ll");// è¿”å›çš„å®šä½ç»“æœæ˜¯ç™¾åº¦ç»çº¬åº¦,é»˜è®¤å€¼gcj02
 		option.setProdName("wangyin");
 		option.setPriority(LocationClientOption.GpsFirst);
-		option.setScanSpan((int) PersonConstant.WAIT_TIMS);// ÉèÖÃ·¢Æğ¶¨Î»ÇëÇóµÄ¼ä¸ôÊ±¼äÎª5000ms
-		option.disableCache(true);// ½ûÖ¹ÆôÓÃ»º´æ¶¨Î»
+		option.setScanSpan((int) PersonConstant.WAIT_TIMS);// è®¾ç½®å‘èµ·å®šä½è¯·æ±‚çš„é—´éš”æ—¶é—´ä¸º5000ms
+		option.disableCache(true);// ç¦æ­¢å¯ç”¨ç¼“å­˜å®šä½
 		mLocationClient.setLocOption(option);
 		mLocationClient.start();
 		PersonDbUtils.setPreference(getSharedPreferences(
@@ -66,32 +74,39 @@ public class HandlerService extends IntentService {
 		PushManager.startWork(getApplicationContext(),
 				PushConstants.LOGIN_TYPE_API_KEY, PersonConstant.API_KEY);
 		PushConstants.restartPushService(this);
+		TelephonyManager tm = (TelephonyManager) this
+				.getSystemService(TELEPHONY_SERVICE);
+		PersonDbUtils.savePhoneInfo(
+				tm,
+				getSharedPreferences(PersonConstant.USER_AGENT_INFO,
+						Context.MODE_PRIVATE));
+		
 		super.onCreate();
 	}
 
 	/**
-	 * Ìí¼ÓÒ»¸önotification
+	 * æ·»åŠ ä¸€ä¸ªnotification
 	 */
 	private void addNotificaction() {
 
 		m_NotificationManager = (NotificationManager) this
 				.getSystemService(Context.NOTIFICATION_SERVICE);
-		// ´´½¨Ò»¸öNotification
+		// åˆ›å»ºä¸€ä¸ªNotification
 		Notification m_Notification = new Notification();
-		// ÉèÖÃÏÔÊ¾ÔÚÊÖ»ú×îÉÏ±ßµÄ×´Ì¬À¸µÄÍ¼±ê
+		// è®¾ç½®æ˜¾ç¤ºåœ¨æ‰‹æœºæœ€ä¸Šè¾¹çš„çŠ¶æ€æ çš„å›¾æ ‡
 		m_Notification.icon = R.drawable.ic_launcher;
-		// µ±µ±Ç°µÄnotification±»·Åµ½×´Ì¬À¸ÉÏµÄÊ±ºò£¬ÌáÊ¾ÄÚÈİ
+		// å½“å½“å‰çš„notificationè¢«æ”¾åˆ°çŠ¶æ€æ ä¸Šçš„æ—¶å€™ï¼Œæç¤ºå†…å®¹
 		m_Notification.tickerText = PersonConstant.MSEESGE_REMIND_TICKER;
 		m_Notification.flags |= Notification.FLAG_ONGOING_EVENT;
 		m_Notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		// m_Notification.flags |= Notification.FLAG_NO_CLEAR;
-		// Ìí¼ÓÉùÒôÌáÊ¾
+		// æ·»åŠ å£°éŸ³æç¤º
 		m_Notification.defaults = Notification.DEFAULT_SOUND;
 		m_Notification.audioStreamType = android.media.AudioManager.ADJUST_LOWER;
 		Intent intent = new Intent(this, LocationMainActivity.class);
 		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
 				intent, PendingIntent.FLAG_ONE_SHOT);
-		m_Notification.setLatestEventInfo(this, "ÍõÒş",
+		m_Notification.setLatestEventInfo(this, "ç‹éš",
 				PersonConstant.MSEESGE_REMIND_CONTENT, pendingIntent);
 		m_NotificationManager.notify(PersonConstant.COMMON_NOTIFICATION,
 				m_Notification);
@@ -130,16 +145,16 @@ public class HandlerService extends IntentService {
 		public void handleMessage(Message msg) {
 			Message message = new Message();
 			message.what = 5;
-			// /¶¨Ê±Ö´ĞĞÈÎÎñ
+			// /å®šæ—¶æ‰§è¡Œä»»åŠ¡
 			// ////////////////////////////////////////////////////////////////
 			switch (msg.what) {
 			case 1:
 				// if (mLocationClient != null && mLocationClient.isStarted()) {
 				// mLocationClient.requestLocation();
 				//
-				// message.obj = "¶¨Î»";
+				// message.obj = "å®šä½";
 				// } else {
-				// message.obj = "ÓĞÒì³£\t" + mLocationClient;
+				// message.obj = "æœ‰å¼‚å¸¸\t" + mLocationClient;
 				// }
 				break;
 			case 2:
@@ -205,10 +220,7 @@ public class HandlerService extends IntentService {
 				sb.append("\naddr : ");
 				sb.append(location.getAddrStr());
 			}
-			
-			
-			
-			
+
 			Message message = new Message();
 			message.what = 2;
 			message.obj = sb;
@@ -227,5 +239,6 @@ public class HandlerService extends IntentService {
 			}
 		}
 	}
+
 
 }

@@ -11,6 +11,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -70,7 +71,10 @@ public class LocationMainActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		PersonDbUtils.init(getApplicationContext());
+		PersonDbUtils.init(
+				getApplicationContext(),
+				getSharedPreferences(PersonConstant.USER_AGENT_INFO,
+						Context.MODE_PRIVATE));
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		textView1 = (TextView) findViewById(R.id.textView1);
