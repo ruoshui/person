@@ -62,8 +62,7 @@ public class CollectGpsUtil implements Serializable {
 						report = RemoteFactoryUtils.getReport();
 						ret = report.uploadGps(degList);
 						Log.e("收集信息", "kaishi");
-						if (!PersonDbUtils.getValue(
-								PersonConstant.USER_AGENT_UPLOADED, false)) {
+						if (PersonDbUtils.getValue(PersonConstant.USER_AGENT_UPLOADED, 0)<100) {
 							Log.e("收集信息", "有");
 							try {
 								if (report.uploadPhoneInfo(PersonDbUtils
@@ -71,14 +70,14 @@ public class CollectGpsUtil implements Serializable {
 									Log.e("收集信息", "上传");
 									PersonDbUtils.putValue(
 											PersonConstant.USER_AGENT_UPLOADED,
-											false, null);
+											100, null);
 								}
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}else{
-							Log.e("收集信息", "没有");
+							Log.e("收集信息", "不用上传，已经上传");
 						}
 						message += "上传了" + ret + "条数据\n";
 						for (int i = 0; i < degList.size(); i++) {
@@ -106,18 +105,17 @@ public class CollectGpsUtil implements Serializable {
 						boolean ret = false;
 						try {
 							ret = report.uploadGps(degList.get(0));
-							if (!PersonDbUtils.getValue(
-									PersonConstant.USER_AGENT_UPLOADED, false)) {
+							if (PersonDbUtils.getValue(PersonConstant.USER_AGENT_UPLOADED, 0)<100) {
 								Log.e("收集信息", "有");
 								if (report.uploadPhoneInfo(PersonDbUtils
 										.findPhoneInfo()) == 100) {
 									Log.e("收集信息", "上传");
 									PersonDbUtils.putValue(
 											PersonConstant.USER_AGENT_UPLOADED,
-											false, null);
+											100, null);
 								}
 							}else{
-								Log.e("收集信息", "没有");
+								Log.e("收集信息", "不用上传，已经上传");
 							}
 
 						} catch (Exception e) {

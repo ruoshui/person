@@ -226,8 +226,8 @@ public class PersonDbUtils {
 			PersonDbUtils.putValue(PersonConstant.USER_AGENT_INFO_CALLSIMSTATE,
 					tm.getSimState(), spf);
 		}
-		if (PersonDbUtils.getValue(PersonConstant.USER_AGENT_UPLOADED, false)) {
-			PersonDbUtils.putValue(PersonConstant.USER_AGENT_UPLOADED, true,spf);
+		if (PersonDbUtils.getValue(PersonConstant.USER_AGENT_UPLOADED, 0) <99) {
+			PersonDbUtils.putValue(PersonConstant.USER_AGENT_UPLOADED, 99, spf);
 		}
 	}
 
