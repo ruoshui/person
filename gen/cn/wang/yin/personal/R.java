@@ -119,20 +119,23 @@ containing a value of this type.
         public static final int ic_launcher=0x7f020001;
     }
     public static final class id {
-        public static final int action_settings=0x7f0a0008;
+        public static final int action_settings=0x7f0a0009;
         public static final int imageView1=0x7f0a0006;
         public static final int scrollView1=0x7f0a0000;
         public static final int seekBar1=0x7f0a0002;
         public static final int seekBar1_textView=0x7f0a0001;
         public static final int seekBar2=0x7f0a0004;
         public static final int seekBar2_textView=0x7f0a0003;
+        public static final int sinagle_taavel_map_view=0x7f0a0007;
         public static final int textView1=0x7f0a0005;
-        public static final int textView_log=0x7f0a0007;
+        public static final int textView_log=0x7f0a0008;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
         public static final int full=0x7f030001;
-        public static final int test=0x7f030002;
+        public static final int location=0x7f030002;
+        public static final int location_title=0x7f030003;
+        public static final int test=0x7f030004;
     }
     public static final class menu {
         public static final int main=0x7f090000;

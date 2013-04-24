@@ -1,53 +1,165 @@
 package cn.wang.yin.ui;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.view.View;
+import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
 import android.widget.TextView;
 import cn.wang.yin.personal.R;
+import cn.wang.yin.personal.service.HandlerService;
+import cn.wang.yin.utils.PersonConstant;
+import cn.wang.yin.utils.PersonDbUtils;
+import cn.wang.yin.utils.PersonIntens;
 
-import com.baidu.location.BDLocation;
-import com.baidu.location.BDLocationListener;
-import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.BMapManager;
+import com.baidu.mapapi.map.GraphicsOverlay;
+import com.baidu.mapapi.map.ItemizedOverlay;
+import com.baidu.mapapi.map.MapController;
+import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.OverlayItem;
+import com.baidu.platform.comapi.basestruct.GeoPoint;
 
 public class Location extends Activity {
-	public TextView textView1;
-	public LocationClient mLocationClient = null;
-	public BDLocationListener myListener = new MyLocationListener();
+	public static View mPopView = null;
+	public static TextView pop_text;
+	BMapManager mBMapMan = null;
+	public static MapView mMapView = null;
+	GraphicsOverlay graphicsOverlay = null;
+	// List<LocationInfo> listLocation = new ArrayList();
+	MapController mMapController;
+	Timer timer = new Timer();
+	TimerTask task;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-
+		PersonDbUtils.init(
+				getApplicationContext(),
+				getSharedPreferences(PersonConstant.USER_AGENT_INFO,
+						Context.MODE_PRIVATE));
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.test);
-		textView1 = (TextView) findViewById(R.id.textView_log);
-		mLocationClient = new LocationClient(getApplicationContext()); // 声明LocationClient类
-		mLocationClient.registerLocationListener(myListener); // 注册监听函数
-		LocationClientOption option = new LocationClientOption();
-		option.setOpenGps(true);
-		option.setAddrType("all");// 返回的定位结果包含地址信息
-		option.setCoorType("bd09ll");// 返回的定位结果是百度经纬度,默认值gcj02
-		option.setScanSpan(5000);// 设置发起定位请求的间隔时间为5000ms
-		option.disableCache(true);// 禁止启用缓存定位
-		option.setPoiNumber(5); // 最多返回POI个数
-		option.setPoiDistance(1000); // poi查询距离
-		option.setPoiExtraInfo(true); // 是否需要POI的电话和地址等详细信息
-		mLocationClient.setLocOption(option);
-		// mLocationClient.start();
+		mBMapMan = new BMapManager(getApplication());
+		mBMapMan.init(PersonConstant.BAIDU_MAP_KEY, null);
+		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+		setContentView(R.layout.location);
+		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,
+				R.layout.location_title);
+		System.out.println("map");
+		mMapView = (MapView) findViewById(R.id.sinagle_taavel_map_view);
+		mMapView.setBuiltInZoomControls(true);
+		// 设置启用内置的缩放控件
+		MapController mMapController = mMapView.getController();
+		// 得到mMapView的控制权,可以用它控制和驱动平移和缩放
+		// 用给定的经纬度构造一个GeoPoint，单位是微度 (度 * 1E6)
+		mMapController.setCenter(PersonIntens.getPoint());// 设置地图中心点
+		mMapController.setZoom(17);// 设置地图zoom级别
 
-		
-		
+		graphicsOverlay = new GraphicsOverlay(mMapView);
+		mMapView.getOverlays().add(graphicsOverlay);
+		// showLoaction();
+		// Drawable marker = getResources().getDrawable(R.drawable.locationred);
+		// mMapView.getOverlays().add(new OverItemT(marker,
+		// MyMapActivity.this));
+		mMapView.refresh();// 刷新地图
+
+		// push("开始启动服务");
+		startService(new Intent(getApplicationContext(), HandlerService.class));
+		task = new TimerTask() {
+			@Override
+			public void run() {
+				handler.sendEmptyMessage(0);
+			}
+		};
+		timer.schedule(task, PersonConstant.WAIT_TIMS, PersonConstant.WAIT_TIMS);
+	}
+
+	Handler handler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case 0:
+				mMapController.setCenter(PersonIntens.getPoint());//
+				mMapView.refresh();
+				break;
+			}
+
+		}
+	};
+
+	public class OverItemS extends ItemizedOverlay<OverlayItem> implements
+			Serializable {
+		private List<OverlayItem> GeoList = new ArrayList<OverlayItem>();
+		private Context mContext;
+
+		public OverItemS(Drawable marker) {
+			super(marker);
+		}
+
+		public OverItemS(Drawable marker, Context context) {
+			super(null);
+			this.mContext = context;
+			populate();
+		}
+
+		@Override
+		protected OverlayItem createItem(int i) {
+			return GeoList.get(i);
+		}
+
+		@Override
+		public int size() {
+			return GeoList.size();
+		}
+
+		public void addItem(OverlayItem item) {
+			GeoList.add(item);
+			populate();
+		}
+
+		@Override
+		// 处理当点击事件
+		protected boolean onTap(int i) {
+			OverlayItem overItem = getItem(i);
+			GeoPoint pt = GeoList.get(i).getPoint();
+			mMapView.updateViewLayout(mPopView, new MapView.LayoutParams(
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, pt,
+					com.baidu.mapapi.map.MapView.LayoutParams.BOTTOM_CENTER));
+			mPopView.setVisibility(View.VISIBLE);
+			pop_text.setText(overItem.getSnippet());
+			return true;
+		}
+
+		@Override
+		public boolean onTap(GeoPoint arg0, MapView arg1) {
+			// 消去弹出的气泡
+			mPopView.setVisibility(View.GONE);
+			return super.onTap(arg0, arg1);
+		}
 	}
 
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
+		task.cancel();
 		super.onDestroy();
 	}
 
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
+		task.run();
 		super.onPause();
 	}
 
@@ -59,7 +171,7 @@ public class Location extends Activity {
 
 	@Override
 	protected void onResume() {
-		// TODO Auto-generated method stub
+		task.cancel();
 		super.onResume();
 	}
 
@@ -72,69 +184,8 @@ public class Location extends Activity {
 	@Override
 	protected void onStop() {
 		// TODO Auto-generated method stub
+		task.cancel();
 		super.onStop();
 	}
 
-	public class MyLocationListener implements BDLocationListener {
-		@Override
-		public void onReceiveLocation(BDLocation location) {
-			if (location == null)
-				return;
-			StringBuffer sb = new StringBuffer(256);
-			sb.append("time : ");
-			sb.append(location.getTime());
-			sb.append("\nerror code : ");
-			sb.append(location.getLocType());
-			sb.append("\nlatitude : ");
-			sb.append(location.getLatitude());
-			sb.append("\nlontitude : ");
-			sb.append(location.getLongitude());
-			sb.append("\nradius : ");
-			sb.append(location.getRadius());
-			if (location.getLocType() == BDLocation.TypeGpsLocation) {
-				sb.append("\nspeed : ");
-				sb.append(location.getSpeed());
-				sb.append("\nsatellite : ");
-				sb.append(location.getSatelliteNumber());
-			} else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
-				sb.append("\naddr : ");
-				sb.append(location.getAddrStr());
-			}
-			String str = (String) textView1.getText();
-			if (str.split("\n").length > 20) {
-				textView1.setText("");
-			}
-			textView1.setText(textView1.getText() + "\n" + sb.toString() + "\n"
-					+ "------------------------------");
-
-		}
-
-		@Override
-		public void onReceivePoi(BDLocation poiLocation) {
-			if (poiLocation == null) {
-				return;
-			}
-			StringBuffer sb = new StringBuffer(256);
-			sb.append("Poi time : ");
-			sb.append(poiLocation.getTime());
-			sb.append("\nerror code : ");
-			sb.append(poiLocation.getLocType());
-			sb.append("\nlatitude : ");
-			sb.append(poiLocation.getLatitude());
-			sb.append("\nlontitude : ");
-			sb.append(poiLocation.getLongitude());
-			sb.append("\nradius : ");
-			sb.append(poiLocation.getRadius());
-			if (poiLocation.getLocType() == BDLocation.TypeNetWorkLocation) {
-				sb.append("\naddr : ");
-				sb.append(poiLocation.getAddrStr());
-			}
-			if (poiLocation.hasPoi()) {
-				sb.append("\nPoi:");
-				sb.append(poiLocation.getPoi());
-			} else {
-				sb.append("noPoi information");
-			}
-		}
-	}
 }

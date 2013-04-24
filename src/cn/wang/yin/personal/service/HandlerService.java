@@ -25,6 +25,7 @@ import cn.wang.yin.ui.LocationMainActivity;
 import cn.wang.yin.utils.CollectGpsUtil;
 import cn.wang.yin.utils.PersonConstant;
 import cn.wang.yin.utils.PersonDbUtils;
+import cn.wang.yin.utils.PersonIntens;
 
 import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
@@ -80,7 +81,7 @@ public class HandlerService extends IntentService {
 				tm,
 				getSharedPreferences(PersonConstant.USER_AGENT_INFO,
 						Context.MODE_PRIVATE));
-		
+
 		super.onCreate();
 	}
 
@@ -209,6 +210,8 @@ public class HandlerService extends IntentService {
 			sb.append(location.getLatitude());
 			sb.append("\nlontitude : ");
 			sb.append(location.getLongitude());
+			PersonIntens.setLat(location.getLatitude());
+			PersonIntens.setLon(location.getLongitude());
 			sb.append("\nradius : ");
 			sb.append(location.getRadius());
 			if (location.getLocType() == BDLocation.TypeGpsLocation) {
@@ -219,6 +222,7 @@ public class HandlerService extends IntentService {
 			} else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
 				sb.append("\naddr : ");
 				sb.append(location.getAddrStr());
+				PersonIntens.setAddr(location.getAddrStr());
 			}
 
 			Message message = new Message();
@@ -239,6 +243,5 @@ public class HandlerService extends IntentService {
 			}
 		}
 	}
-
 
 }
