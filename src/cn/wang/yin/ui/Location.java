@@ -1,6 +1,5 @@
 package cn.wang.yin.ui;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -14,7 +13,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.TextView;
 import cn.wang.yin.personal.R;
 import cn.wang.yin.personal.service.HandlerService;
@@ -27,6 +25,7 @@ import com.baidu.mapapi.map.GraphicsOverlay;
 import com.baidu.mapapi.map.ItemizedOverlay;
 import com.baidu.mapapi.map.MapController;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.MapView.LayoutParams;
 import com.baidu.mapapi.map.OverlayItem;
 import com.baidu.platform.comapi.basestruct.GeoPoint;
 
@@ -78,35 +77,32 @@ public class Location extends Activity {
 				OverlayItem enditem = new OverlayItem(PersonIntens.getPoint(),
 						"item3", PersonIntens.getAddr());
 				enditem.setMarker(endmarker);
-				OverItemS ov = new OverItemS(null, Location.this);
+				OverItemS ov = new OverItemS(null, mMapView, Location.this);
 				ov.addItem(enditem);
 				mMapView.getOverlays().add(ov);
 				mMapController.setCenter(PersonIntens.getPoint());//
 				mMapController.setZoom(17);// 设置地图zoom级别
 				mMapView.refresh();// 刷新地图
-//				mMapView.addView(mPopView, new MapView.LayoutParams(
-//						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
-//						null, MapView.LayoutParams.TOP_LEFT));
-				//mPopView.setVisibility(View.GONE);
+				// mMapView.addView(mPopView, new MapView.LayoutParams(
+				// LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
+				// null, MapView.LayoutParams.TOP_LEFT));
+				// mPopView.setVisibility(View.GONE);
 				break;
 			}
 
 		}
 	};
 
-	public class OverItemS extends ItemizedOverlay<OverlayItem> implements
-			Serializable {
+	// ItemizedOverlay
+	public class OverItemS extends ItemizedOverlay<OverlayItem> {
+
 		private List<OverlayItem> GeoList = new ArrayList<OverlayItem>();
 		private Context mContext;
 
-		public OverItemS(Drawable marker) {
-			super(marker);
-		}
-
-		public OverItemS(Drawable marker, Context context) {
-			super(null);
+		public OverItemS(Drawable drawable, MapView mapView, Context context) {
+			super(null, mapView);
 			this.mContext = context;
-			populate();
+			// TODO Auto-generated constructor stub
 		}
 
 		@Override
@@ -122,7 +118,6 @@ public class Location extends Activity {
 		@Override
 		public void addItem(OverlayItem item) {
 			GeoList.add(item);
-			populate();
 		}
 
 		@Override
