@@ -13,8 +13,6 @@ import android.net.NetworkInfo;
 import android.os.Message;
 import android.util.Log;
 import cn.wang.yin.hessian.api.Remot;
-import cn.wang.yin.ui.LocationMainActivity;
-
 import com.baidu.location.BDLocation;
 import com.wang.yin.hessian.bean.GpsInfo;
 

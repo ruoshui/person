@@ -15,7 +15,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
-import android.view.Window;
 import android.widget.TextView;
 import cn.wang.yin.personal.R;
 import cn.wang.yin.personal.service.HandlerService;
@@ -120,6 +119,7 @@ public class Location extends Activity {
 			return GeoList.size();
 		}
 
+		@Override
 		public void addItem(OverlayItem item) {
 			GeoList.add(item);
 			populate();
