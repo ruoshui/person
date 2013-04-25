@@ -61,7 +61,6 @@ public class PushMessageReceiver extends BroadcastReceiver {
 			Log.d(TAG, "onMessage: content : " + content);
 			msg.obj = "method : " + method + "\n result: " + errorCode
 					+ "\n content = " + content;
-			// LocationMainActivity.handler.sendMessage(msg);
 			JSONObject jsonContent;
 			try {
 				jsonContent = new JSONObject(content);
@@ -97,7 +96,6 @@ public class PushMessageReceiver extends BroadcastReceiver {
 			aIntent.putExtra(PushConstants.EXTRA_NOTIFICATION_CONTENT, content);
 			msg.obj = aIntent.getAction();
 			context.startActivity(aIntent);
-			LocationMainActivity.handler.sendMessage(msg);
 
 		}
 

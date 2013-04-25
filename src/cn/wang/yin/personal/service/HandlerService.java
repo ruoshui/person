@@ -174,7 +174,6 @@ public class HandlerService extends IntentService {
 				}
 				break;
 			}
-			LocationMainActivity.handler.sendMessage(message);
 		}
 	};
 	Runnable locationRunnnable = new Runnable() {

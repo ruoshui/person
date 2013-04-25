@@ -36,7 +36,6 @@ public class PersonDbUtils {
 		Message message = new Message();
 		message.what = 5;
 		message.obj = "锁定数据库";
-		LocationMainActivity.handler.sendMessage(message);
 		setLock(true);
 	}
 
@@ -44,7 +43,6 @@ public class PersonDbUtils {
 		Message message = new Message();
 		message.what = 5;
 		message.obj = "解除锁定数据库";
-		LocationMainActivity.handler.sendMessage(message);
 		setLock(false);
 	}
 
