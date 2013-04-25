@@ -64,7 +64,8 @@ public class Location extends Activity {
 		mMapView.refresh();// 刷新地图
 		// push("开始启动服务");
 		startService(new Intent(getApplicationContext(), HandlerService.class));
-
+		mPopView = super.getLayoutInflater().inflate(R.layout.popview, null);
+		pop_text = (TextView) mPopView.findViewById(R.id.pop_text);
 	}
 
 	Handler handler = new Handler() {
@@ -84,10 +85,10 @@ public class Location extends Activity {
 				mMapController.setCenter(PersonIntens.getPoint());//
 				mMapController.setZoom(17);// 设置地图zoom级别
 				mMapView.refresh();// 刷新地图
-				mMapView.addView(mPopView, new MapView.LayoutParams(
-						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
-						null, MapView.LayoutParams.TOP_LEFT));
-				mPopView.setVisibility(View.GONE);
+//				mMapView.addView(mPopView, new MapView.LayoutParams(
+//						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
+//						null, MapView.LayoutParams.TOP_LEFT));
+				//mPopView.setVisibility(View.GONE);
 				break;
 			}
 
