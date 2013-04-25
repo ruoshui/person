@@ -6,12 +6,15 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import cn.wang.yin.personal.R;
@@ -19,6 +22,7 @@ import cn.wang.yin.personal.service.HandlerService;
 import cn.wang.yin.utils.PersonConstant;
 import cn.wang.yin.utils.PersonDbUtils;
 import cn.wang.yin.utils.PersonIntens;
+import cn.wang.yin.utils.PersonStringUtils;
 
 import com.baidu.mapapi.BMapManager;
 import com.baidu.mapapi.map.GraphicsOverlay;
@@ -39,6 +43,7 @@ public class Location extends Activity {
 	MapController mMapController;
 	Timer timer = new Timer();
 	TimerTask task;
+	protected static TabChangeReceiver receiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +97,14 @@ public class Location extends Activity {
 
 		}
 	};
+
+	public class TabChangeReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			int intExtra = intent.getIntExtra("tab", 0);
+
+		}
+	}
 
 	// ItemizedOverlay
 	public class OverItemS extends ItemizedOverlay<OverlayItem> {
@@ -161,7 +174,9 @@ public class Location extends Activity {
 
 	@Override
 	protected void onResume() {
+		receiver = new TabChangeReceiver();
 		super.onResume();
+
 	}
 
 	@Override
