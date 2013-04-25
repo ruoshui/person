@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.widget.TextView;
+import cn.etgps.etong.SinagleTravelDataMap.OverItemS;
 import cn.wang.yin.personal.R;
 import cn.wang.yin.personal.service.HandlerService;
 import cn.wang.yin.utils.PersonConstant;
@@ -67,21 +68,12 @@ public class Location extends Activity {
 
 		graphicsOverlay = new GraphicsOverlay(mMapView);
 		mMapView.getOverlays().add(graphicsOverlay);
-		// showLoaction();
-		// Drawable marker = getResources().getDrawable(R.drawable.locationred);
-		// mMapView.getOverlays().add(new OverItemT(marker,
-		// MyMapActivity.this));
+
 		mMapView.refresh();// 刷新地图
 
 		// push("开始启动服务");
 		startService(new Intent(getApplicationContext(), HandlerService.class));
-		task = new TimerTask() {
-			@Override
-			public void run() {
-				handler.sendEmptyMessage(0);
-			}
-		};
-		timer.schedule(task, PersonConstant.WAIT_TIMS, PersonConstant.WAIT_TIMS);
+
 	}
 
 	Handler handler = new Handler() {
@@ -90,8 +82,23 @@ public class Location extends Activity {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case 0:
+				// 画终点
+				Drawable endmarker = getResources().getDrawable(
+						R.drawable.);
+				OverlayItem enditem = new OverlayItem(endPoint, "item3",
+						locend.getVehiclePosition());
+				enditem.setMarker(endmarker);
+				OverItemS ov = new OverItemS(startmarker,
+						getApplicationContext());
+				ov.addItem(enditem);
+				mMapView.getOverlays().add(ov);
 				mMapController.setCenter(PersonIntens.getPoint());//
-				mMapView.refresh();
+				mMapView.refresh();// 刷新地图
+				mMapView.addView(mPopView, new MapView.LayoutParams(
+						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
+						null, MapView.LayoutParams.TOP_LEFT));
+				mPopView.setVisibility(View.GONE);
+
 				break;
 			}
 
@@ -152,14 +159,12 @@ public class Location extends Activity {
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
-		task.cancel();
 		super.onDestroy();
 	}
 
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
-		task.run();
 		super.onPause();
 	}
 
@@ -171,20 +176,25 @@ public class Location extends Activity {
 
 	@Override
 	protected void onResume() {
-		task.cancel();
 		super.onResume();
 	}
 
 	@Override
 	protected void onStart() {
 		// TODO Auto-generated method stub
+		task = new TimerTask() {
+			@Override
+			public void run() {
+				handler.sendEmptyMessage(0);
+			}
+		};
+		timer.schedule(task, PersonConstant.WAIT_TIMS, PersonConstant.WAIT_TIMS);
 		super.onStart();
 	}
 
 	@Override
 	protected void onStop() {
 		// TODO Auto-generated method stub
-		task.cancel();
 		super.onStop();
 	}
 
