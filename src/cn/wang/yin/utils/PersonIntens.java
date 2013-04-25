@@ -9,21 +9,30 @@ public class PersonIntens extends Application {
 	private static String addr;
 
 	public PersonIntens() {
+
+	}
+
+	public static void setLon(double lon) {
 		if (point == null) {
 			point = new GeoPoint((int) (22.594101 * 1e6),
 					(int) (113.971166 * 1e6));
 		}
-	}
-
-	public static void setLon(double lon) {
 		point.setLongitudeE6((int) (lon * 1e6));
 	}
 
 	public static void setLat(double lat) {
+		if (point == null) {
+			point = new GeoPoint((int) (22.594101 * 1e6),
+					(int) (113.971166 * 1e6));
+		}
 		point.setLatitudeE6((int) (lat * 1e6));
 	}
 
 	public static GeoPoint getPoint() {
+		if (point == null) {
+			point = new GeoPoint((int) (22.594101 * 1e6),
+					(int) (113.971166 * 1e6));
+		}
 		return point;
 	}
 
