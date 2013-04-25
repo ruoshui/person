@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.widget.TextView;
-import cn.etgps.etong.SinagleTravelDataMap.OverItemS;
 import cn.wang.yin.personal.R;
 import cn.wang.yin.personal.service.HandlerService;
 import cn.wang.yin.utils.PersonConstant;
@@ -52,25 +51,17 @@ public class Location extends Activity {
 		super.onCreate(savedInstanceState);
 		mBMapMan = new BMapManager(getApplication());
 		mBMapMan.init(PersonConstant.BAIDU_MAP_KEY, null);
-		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.location);
-		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,
-				R.layout.location_title);
 		System.out.println("map");
 		mMapView = (MapView) findViewById(R.id.sinagle_taavel_map_view);
-		mMapView.setBuiltInZoomControls(true);
+		mMapView.setBuiltInZoomControls(false);
 		// 设置启用内置的缩放控件
-		MapController mMapController = mMapView.getController();
-		// 得到mMapView的控制权,可以用它控制和驱动平移和缩放
-		// 用给定的经纬度构造一个GeoPoint，单位是微度 (度 * 1E6)
+		mMapController = mMapView.getController();
 		mMapController.setCenter(PersonIntens.getPoint());// 设置地图中心点
 		mMapController.setZoom(17);// 设置地图zoom级别
-
 		graphicsOverlay = new GraphicsOverlay(mMapView);
 		mMapView.getOverlays().add(graphicsOverlay);
-
 		mMapView.refresh();// 刷新地图
-
 		// push("开始启动服务");
 		startService(new Intent(getApplicationContext(), HandlerService.class));
 
@@ -82,23 +73,21 @@ public class Location extends Activity {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case 0:
-				// 画终点
 				Drawable endmarker = getResources().getDrawable(
-						R.drawable.);
-				OverlayItem enditem = new OverlayItem(endPoint, "item3",
-						locend.getVehiclePosition());
+						R.drawable.gplaces);
+				OverlayItem enditem = new OverlayItem(PersonIntens.getPoint(),
+						"item3", PersonIntens.getAddr());
 				enditem.setMarker(endmarker);
-				OverItemS ov = new OverItemS(startmarker,
-						getApplicationContext());
+				OverItemS ov = new OverItemS(null, Location.this);
 				ov.addItem(enditem);
 				mMapView.getOverlays().add(ov);
 				mMapController.setCenter(PersonIntens.getPoint());//
+				mMapController.setZoom(17);// 设置地图zoom级别
 				mMapView.refresh();// 刷新地图
 				mMapView.addView(mPopView, new MapView.LayoutParams(
 						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
 						null, MapView.LayoutParams.TOP_LEFT));
 				mPopView.setVisibility(View.GONE);
-
 				break;
 			}
 
