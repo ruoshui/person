@@ -1,5 +1,7 @@
 package cn.wang.yin.utils;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.baidu.platform.comapi.basestruct.GeoPoint;
 
 import android.app.Application;
@@ -37,6 +39,7 @@ public class PersonIntens extends Application {
 	}
 
 	public static String getAddr() {
+		addr = StringUtils.isNotBlank(addr) ? addr : "Î»ÖÃÎ´Öª";
 		return addr;
 	}
 
