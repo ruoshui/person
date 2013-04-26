@@ -81,6 +81,10 @@ public class PersonConstant {
 	public static final String USER_AGENT_INFO_PHONENUM = "user_agent_info_phonenum_cn.wang.yin";
 
 	public static final String USER_AGENT_UPLOADED = "user_agent_info_uploaded_cn.wang.yin";
+
 	// 测试俩人同时上传
+	public static final String LOCATION_CHANGE_TAG = "person_location_change";
+	
+	public static final int LOCATION_CHANGE = 23;
 
 }

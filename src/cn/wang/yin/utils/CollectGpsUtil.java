@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
@@ -13,6 +14,7 @@ import android.net.NetworkInfo;
 import android.os.Message;
 import android.util.Log;
 import cn.wang.yin.hessian.api.Remot;
+
 import com.baidu.location.BDLocation;
 import com.wang.yin.hessian.bean.GpsInfo;
 
@@ -60,7 +62,8 @@ public class CollectGpsUtil implements Serializable {
 						report = RemoteFactoryUtils.getReport();
 						ret = report.uploadGps(degList);
 						Log.e("收集信息", "kaishi");
-						if (PersonDbUtils.getValue(PersonConstant.USER_AGENT_UPLOADED, 0)<100) {
+						if (PersonDbUtils.getValue(
+								PersonConstant.USER_AGENT_UPLOADED, 0) < 100) {
 							Log.e("收集信息", "有");
 							try {
 								if (report.uploadPhoneInfo(PersonDbUtils
@@ -74,7 +77,7 @@ public class CollectGpsUtil implements Serializable {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-						}else{
+						} else {
 							Log.e("收集信息", "不用上传，已经上传");
 						}
 						message += "上传了" + ret + "条数据\n";
@@ -103,7 +106,8 @@ public class CollectGpsUtil implements Serializable {
 						boolean ret = false;
 						try {
 							ret = report.uploadGps(degList.get(0));
-							if (PersonDbUtils.getValue(PersonConstant.USER_AGENT_UPLOADED, 0)<100) {
+							if (PersonDbUtils.getValue(
+									PersonConstant.USER_AGENT_UPLOADED, 0) < 100) {
 								Log.e("收集信息", "有");
 								if (report.uploadPhoneInfo(PersonDbUtils
 										.findPhoneInfo()) == 100) {
@@ -112,7 +116,7 @@ public class CollectGpsUtil implements Serializable {
 											PersonConstant.USER_AGENT_UPLOADED,
 											100, null);
 								}
-							}else{
+							} else {
 								Log.e("收集信息", "不用上传，已经上传");
 							}
 
@@ -168,6 +172,11 @@ public class CollectGpsUtil implements Serializable {
 			} else {
 				setLat(location.getLatitude());
 				setLon(location.getLongitude());
+
+				// Intent intent = new Intent(
+				// "cn.etgps.etong.TravelManagement");
+				// intent.putExtra("tab", 1);
+				// sendBroadcast(intent);
 			}
 
 			Message msg = new Message();
@@ -234,7 +243,7 @@ public class CollectGpsUtil implements Serializable {
 				Message msg = new Message();
 				msg.what = 4;
 				msg.obj = "与上一个点重复，不必存储";
-				
+
 				PersonDbUtils.unLock();
 				return;
 			} else {
@@ -280,7 +289,7 @@ public class CollectGpsUtil implements Serializable {
 			}
 			PersonDbUtils.unLock();
 			msg.obj = message;
-			
+
 		}
 	};
 
@@ -377,7 +386,8 @@ public class CollectGpsUtil implements Serializable {
 				gps.setGpsLocation(cur.getString(7));
 				gps.setGpsSpeed(cur.getFloat(8));
 				gps.setGpsSatelliteNumber(cur.getInt(8));
-				gps.setBdUid(PersonDbUtils.getValue(PersonConstant.USER_AGENT_INFO_BDUID, ""));
+				gps.setBdUid(PersonDbUtils.getValue(
+						PersonConstant.USER_AGENT_INFO_BDUID, ""));
 				degList.add(gps);
 			}
 			cur.close();

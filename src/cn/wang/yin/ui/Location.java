@@ -101,7 +101,8 @@ public class Location extends Activity {
 	public class TabChangeReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			int intExtra = intent.getIntExtra("tab", 0);
+			int intExtra = intent.getIntExtra(
+					PersonConstant.LOCATION_CHANGE_TAG, 0);
 
 		}
 	}
