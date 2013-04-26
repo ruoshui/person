@@ -9,8 +9,8 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -21,21 +21,21 @@ import cn.wang.yin.personal.R;
 import cn.wang.yin.personal.service.HandlerService;
 import cn.wang.yin.utils.PersonConstant;
 import cn.wang.yin.utils.PersonDbUtils;
-import cn.wang.yin.utils.PersonIntens;
-import cn.wang.yin.utils.PersonStringUtils;
+import cn.wang.yin.utils.PersonIntence;
 
 import com.baidu.mapapi.BMapManager;
 import com.baidu.mapapi.map.GraphicsOverlay;
 import com.baidu.mapapi.map.ItemizedOverlay;
 import com.baidu.mapapi.map.MapController;
 import com.baidu.mapapi.map.MapView;
-import com.baidu.mapapi.map.MapView.LayoutParams;
 import com.baidu.mapapi.map.OverlayItem;
+import com.baidu.mapapi.map.PopupClickListener;
+import com.baidu.mapapi.map.PopupOverlay;
 import com.baidu.platform.comapi.basestruct.GeoPoint;
 
 public class Location extends Activity {
-	public static View mPopView = null;
-	public static TextView pop_text;
+	View mPopView = null;
+	TextView pop_text;
 	BMapManager mBMapMan = null;
 	public static MapView mMapView = null;
 	GraphicsOverlay graphicsOverlay = null;
@@ -44,6 +44,7 @@ public class Location extends Activity {
 	Timer timer = new Timer();
 	TimerTask task;
 	protected static TabChangeReceiver receiver;
+	PopupOverlay pop = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +61,8 @@ public class Location extends Activity {
 		mMapView.setBuiltInZoomControls(false);
 		// 设置启用内置的缩放控件
 		mMapController = mMapView.getController();
-		mMapController.setCenter(PersonIntens.getPoint());// 设置地图中心点
-		mMapController.setZoom(17);// 设置地图zoom级别
+		mMapController.setCenter(PersonIntence.getPoint());// 设置地图中心点
+		mMapController.setZoom(19);// 设置地图zoom级别
 		graphicsOverlay = new GraphicsOverlay(mMapView);
 		mMapView.getOverlays().add(graphicsOverlay);
 		mMapView.refresh();// 刷新地图
@@ -69,6 +70,16 @@ public class Location extends Activity {
 		startService(new Intent(getApplicationContext(), HandlerService.class));
 		mPopView = super.getLayoutInflater().inflate(R.layout.popview, null);
 		pop_text = (TextView) mPopView.findViewById(R.id.pop_text);
+		pop = new PopupOverlay(mMapView, new PopupClickListener() {
+			@Override
+			public void onClickedPopup(int index) {
+				// 在此处理pop点击事件，index为点击区域索引,点击区域最多可有三个
+
+			}
+		});
+		mPopView.setVisibility(View.GONE);
+		mMapView.addView(mPopView);
+
 	}
 
 	Handler handler = new Handler() {
@@ -77,21 +88,6 @@ public class Location extends Activity {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case 0:
-//				Drawable endmarker = getResources().getDrawable(
-//						R.drawable.gplaces);
-//				OverlayItem enditem = new OverlayItem(PersonIntens.getPoint(),
-//						"item3", PersonIntens.getAddr());
-//				enditem.setMarker(endmarker);
-//				OverItemS ov = new OverItemS(null, mMapView, Location.this);
-//				ov.addItem(enditem);
-//				mMapView.getOverlays().add(ov);
-//				mMapController.setCenter(PersonIntens.getPoint());//
-//				mMapController.setZoom(17);// 设置地图zoom级别
-//				mMapView.refresh();// 刷新地图
-				// mMapView.addView(mPopView, new MapView.LayoutParams(
-				// LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
-				// null, MapView.LayoutParams.TOP_LEFT));
-				// mPopView.setVisibility(View.GONE);
 				break;
 			}
 
@@ -101,19 +97,27 @@ public class Location extends Activity {
 	public class TabChangeReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			Log.i("onReceive", "接收到");
 			int intExtra = intent.getIntExtra(
 					PersonConstant.LOCATION_CHANGE_TAG, 0);
 			if (PersonConstant.LOCATION_CHANGE == intExtra) {
+				mMapView.getOverlays().clear();
+				// mMapView.removeAllViews();
+				Log.i("onReceive", "刷新地图");
+				OverItemS ov = new OverItemS(getResources().getDrawable(
+						R.drawable.gplaces), mMapView);
+				mMapView.getOverlays().add(ov);
+
 				Drawable endmarker = getResources().getDrawable(
 						R.drawable.gplaces);
-				OverlayItem enditem = new OverlayItem(PersonIntens.getPoint(),
-						"item3", PersonIntens.getAddr());
+				OverlayItem enditem = new OverlayItem(PersonIntence.getPoint(),
+						"item3", PersonIntence.getAddr());
 				enditem.setMarker(endmarker);
-				OverItemS ov = new OverItemS(null, mMapView, Location.this);
+
 				ov.addItem(enditem);
-				mMapView.getOverlays().add(ov);
-				mMapController.setCenter(PersonIntens.getPoint());//
-				mMapController.setZoom(17);// 设置地图zoom级别
+
+				mMapController.setCenter(PersonIntence.getPoint());//
+				mMapController.setZoom(19);// 设置地图zoom级别
 				mMapView.refresh();// 刷新地图
 			}
 		}
@@ -123,38 +127,21 @@ public class Location extends Activity {
 	public class OverItemS extends ItemizedOverlay<OverlayItem> {
 
 		private List<OverlayItem> GeoList = new ArrayList<OverlayItem>();
-		private Context mContext;
 
-		public OverItemS(Drawable drawable, MapView mapView, Context context) {
-			super(null, mapView);
-			this.mContext = context;
+		public OverItemS(Drawable drawable, MapView mapView) {
+			super(drawable, mapView);
 			// TODO Auto-generated constructor stub
-		}
-
-		@Override
-		protected OverlayItem createItem(int i) {
-			return GeoList.get(i);
-		}
-
-		@Override
-		public int size() {
-			return GeoList.size();
-		}
-
-		@Override
-		public void addItem(OverlayItem item) {
-			GeoList.add(item);
 		}
 
 		@Override
 		// 处理当点击事件
 		protected boolean onTap(int i) {
 			OverlayItem overItem = getItem(i);
-			GeoPoint pt = GeoList.get(i).getPoint();
-			mMapView.updateViewLayout(mPopView, new MapView.LayoutParams(
-					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, pt,
-					com.baidu.mapapi.map.MapView.LayoutParams.BOTTOM_CENTER));
+			GeoPoint pt = overItem.getPoint();
 			mPopView.setVisibility(View.VISIBLE);
+			// pop.showPopup(null, pt, BIND_ABOVE_CLIENT);
+			// mPopView.setX(pt.getLatitudeE6());
+			// mPopView.setY(pt.getLongitudeE6());
 			pop_text.setText(overItem.getSnippet());
 			return true;
 		}
@@ -176,6 +163,7 @@ public class Location extends Activity {
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
+		unregisterReceiver(receiver);
 		super.onPause();
 	}
 
@@ -188,20 +176,14 @@ public class Location extends Activity {
 	@Override
 	protected void onResume() {
 		receiver = new TabChangeReceiver();
+		registerReceiver(receiver, new IntentFilter("cn.wang.yin.ui.Location"),
+				null, handler);
 		super.onResume();
 
 	}
 
 	@Override
 	protected void onStart() {
-		// TODO Auto-generated method stub
-//		task = new TimerTask() {
-//			@Override
-//			public void run() {
-//				//handler.sendEmptyMessage(0);
-//			}
-//		};
-//		timer.schedule(task, PersonConstant.WAIT_TIMS, PersonConstant.WAIT_TIMS);
 		super.onStart();
 	}
 

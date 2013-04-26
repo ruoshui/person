@@ -13,12 +13,13 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import cn.wang.yin.personal.R;
 import cn.wang.yin.ui.LocationMainActivity;
 import cn.wang.yin.utils.CollectGpsUtil;
 import cn.wang.yin.utils.PersonConstant;
 import cn.wang.yin.utils.PersonDbUtils;
-import cn.wang.yin.utils.PersonIntens;
+import cn.wang.yin.utils.PersonIntence;
 
 import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
@@ -164,8 +165,8 @@ public class HandlerService extends IntentService {
 						.getLatitude()
 						|| CollectGpsUtil.getLon() == CollectGpsUtil.location
 								.getLongitude()) {
-					Intent intent = new Intent(
-							"cn.etgps.etong.TravelManagement");
+					Log.e("change", "变化");
+					Intent intent = new Intent("cn.wang.yin.ui.Location");
 					intent.putExtra(PersonConstant.LOCATION_CHANGE_TAG,
 							PersonConstant.LOCATION_CHANGE);
 					sendBroadcast(intent);
@@ -213,8 +214,8 @@ public class HandlerService extends IntentService {
 			sb.append(location.getLatitude());
 			sb.append("\nlontitude : ");
 			sb.append(location.getLongitude());
-			PersonIntens.setLat(location.getLatitude());
-			PersonIntens.setLon(location.getLongitude());
+			PersonIntence.setLat(location.getLatitude());
+			PersonIntence.setLon(location.getLongitude());
 			sb.append("\nradius : ");
 			sb.append(location.getRadius());
 			if (location.getLocType() == BDLocation.TypeGpsLocation) {
@@ -225,7 +226,7 @@ public class HandlerService extends IntentService {
 			} else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
 				sb.append("\naddr : ");
 				sb.append(location.getAddrStr());
-				PersonIntens.setAddr(location.getAddrStr());
+				PersonIntence.setAddr(location.getAddrStr());
 			}
 
 			Message message = new Message();
