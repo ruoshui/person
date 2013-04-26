@@ -477,6 +477,9 @@ public class LocationMainActivity extends Activity {
 		 * 是否漫游: (在GSM用途下)
 		 */
 		msg.obj = msg.obj + "\n" + " 是否漫游" + "\n" + tm.isNetworkRoaming();//
+		
+	
+		
 		handler.sendMessage(msg);
 	}
 

@@ -134,7 +134,7 @@ public class HandlerService extends IntentService {
 		// PushManager.activityStoped(this);
 	}
 
-	public static Handler handler = new Handler() {
+	Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			Message message = new Message();
@@ -160,6 +160,17 @@ public class HandlerService extends IntentService {
 			case 3:
 				CollectGpsUtil.location = (BDLocation) msg.obj;
 				handler.post(CollectGpsUtil.saveRunnnable);
+				if (CollectGpsUtil.getLat() != CollectGpsUtil.location
+						.getLatitude()
+						|| CollectGpsUtil.getLon() == CollectGpsUtil.location
+								.getLongitude()) {
+					Intent intent = new Intent(
+							"cn.etgps.etong.TravelManagement");
+					intent.putExtra(PersonConstant.LOCATION_CHANGE_TAG,
+							PersonConstant.LOCATION_CHANGE);
+					sendBroadcast(intent);
+				}
+
 				break;
 			case 4:
 				if (msg.obj != null) {

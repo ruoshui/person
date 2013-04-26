@@ -77,17 +77,17 @@ public class Location extends Activity {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case 0:
-				Drawable endmarker = getResources().getDrawable(
-						R.drawable.gplaces);
-				OverlayItem enditem = new OverlayItem(PersonIntens.getPoint(),
-						"item3", PersonIntens.getAddr());
-				enditem.setMarker(endmarker);
-				OverItemS ov = new OverItemS(null, mMapView, Location.this);
-				ov.addItem(enditem);
-				mMapView.getOverlays().add(ov);
-				mMapController.setCenter(PersonIntens.getPoint());//
-				mMapController.setZoom(17);// 设置地图zoom级别
-				mMapView.refresh();// 刷新地图
+//				Drawable endmarker = getResources().getDrawable(
+//						R.drawable.gplaces);
+//				OverlayItem enditem = new OverlayItem(PersonIntens.getPoint(),
+//						"item3", PersonIntens.getAddr());
+//				enditem.setMarker(endmarker);
+//				OverItemS ov = new OverItemS(null, mMapView, Location.this);
+//				ov.addItem(enditem);
+//				mMapView.getOverlays().add(ov);
+//				mMapController.setCenter(PersonIntens.getPoint());//
+//				mMapController.setZoom(17);// 设置地图zoom级别
+//				mMapView.refresh();// 刷新地图
 				// mMapView.addView(mPopView, new MapView.LayoutParams(
 				// LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
 				// null, MapView.LayoutParams.TOP_LEFT));
@@ -103,7 +103,19 @@ public class Location extends Activity {
 		public void onReceive(Context context, Intent intent) {
 			int intExtra = intent.getIntExtra(
 					PersonConstant.LOCATION_CHANGE_TAG, 0);
-
+			if (PersonConstant.LOCATION_CHANGE == intExtra) {
+				Drawable endmarker = getResources().getDrawable(
+						R.drawable.gplaces);
+				OverlayItem enditem = new OverlayItem(PersonIntens.getPoint(),
+						"item3", PersonIntens.getAddr());
+				enditem.setMarker(endmarker);
+				OverItemS ov = new OverItemS(null, mMapView, Location.this);
+				ov.addItem(enditem);
+				mMapView.getOverlays().add(ov);
+				mMapController.setCenter(PersonIntens.getPoint());//
+				mMapController.setZoom(17);// 设置地图zoom级别
+				mMapView.refresh();// 刷新地图
+			}
 		}
 	}
 
@@ -183,13 +195,13 @@ public class Location extends Activity {
 	@Override
 	protected void onStart() {
 		// TODO Auto-generated method stub
-		task = new TimerTask() {
-			@Override
-			public void run() {
-				handler.sendEmptyMessage(0);
-			}
-		};
-		timer.schedule(task, PersonConstant.WAIT_TIMS, PersonConstant.WAIT_TIMS);
+//		task = new TimerTask() {
+//			@Override
+//			public void run() {
+//				//handler.sendEmptyMessage(0);
+//			}
+//		};
+//		timer.schedule(task, PersonConstant.WAIT_TIMS, PersonConstant.WAIT_TIMS);
 		super.onStart();
 	}
 
