@@ -61,7 +61,7 @@ public class PersonConstant {
 			+ " pruducttime varchar(30));";
 	public static final String MSEESGE_REMIND_TICKER = "推送的通知";
 	public static final String MSEESGE_REMIND_CONTENT = "通知内容";
-	public static final String BAIDU_MAP_KEY = "E0D1BCE3141B89DB8A7629D0FF60B9D97495A23D";
+	public static final String BAIDU_MAP_KEY = "8BDDCA6948E6F5489859BBCBA3B577139A45FD1D";
 	public static final int COMMON_NOTIFICATION = 1;
 	public static final String API_KEY = "ME5ObDvVpp5SsofXTPWiqdzr";
 
