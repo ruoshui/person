@@ -17,18 +17,12 @@ public class BootupReceiver extends BroadcastReceiver {
 	 */
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Intent inten = new Intent(context, HandlerService.class);
-		inten.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		context.startService(inten);
 		PersonDbUtils.init(context.getApplicationContext(), context
 				.getSharedPreferences(PersonConstant.USER_AGENT_INFO,
 						Context.MODE_PRIVATE));
+		Intent inten = new Intent(context, HandlerService.class);
+		inten.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		context.startService(inten);
 
 	}
 

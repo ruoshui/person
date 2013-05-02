@@ -27,6 +27,7 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.map.LocationData;
 
 public class HandlerService extends IntentService {
 	public static LocationClient mLocationClient = null;
@@ -214,8 +215,13 @@ public class HandlerService extends IntentService {
 			sb.append(location.getLatitude());
 			sb.append("\nlontitude : ");
 			sb.append(location.getLongitude());
-			PersonIntence.setLat(location.getLatitude());
-			PersonIntence.setLon(location.getLongitude());
+			
+			LocationData locData =new LocationData();
+			locData.latitude = location.getLatitude();
+	        locData.longitude = location.getLongitude();
+	        locData.accuracy = location.getRadius();
+	        locData.direction = location.getDerect();
+	        PersonIntence.setLocData(locData);
 			sb.append("\nradius : ");
 			sb.append(location.getRadius());
 			if (location.getLocType() == BDLocation.TypeGpsLocation) {

@@ -26,8 +26,10 @@ import cn.wang.yin.utils.PersonIntence;
 import com.baidu.mapapi.BMapManager;
 import com.baidu.mapapi.map.GraphicsOverlay;
 import com.baidu.mapapi.map.ItemizedOverlay;
+import com.baidu.mapapi.map.LocationData;
 import com.baidu.mapapi.map.MapController;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.MyLocationOverlay;
 import com.baidu.mapapi.map.OverlayItem;
 import com.baidu.mapapi.map.PopupClickListener;
 import com.baidu.mapapi.map.PopupOverlay;
@@ -45,6 +47,7 @@ public class Location extends Activity {
 	TimerTask task;
 	protected static TabChangeReceiver receiver;
 	PopupOverlay pop = null;
+	MyLocationOverlay myLocationOverlay = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,20 +68,15 @@ public class Location extends Activity {
 		mMapController.setZoom(19);// 设置地图zoom级别
 		graphicsOverlay = new GraphicsOverlay(mMapView);
 		mMapView.getOverlays().add(graphicsOverlay);
+
+		myLocationOverlay = new MyLocationOverlay(mMapView);
+	
+		myLocationOverlay.setData(PersonIntence.getLocData());
+		mMapView.getOverlays().add(myLocationOverlay);
+		myLocationOverlay.enableCompass();
 		mMapView.refresh();// 刷新地图
 		// push("开始启动服务");
 		startService(new Intent(getApplicationContext(), HandlerService.class));
-		mPopView = super.getLayoutInflater().inflate(R.layout.popview, null);
-		pop_text = (TextView) mPopView.findViewById(R.id.pop_text);
-		pop = new PopupOverlay(mMapView, new PopupClickListener() {
-			@Override
-			public void onClickedPopup(int index) {
-				// 在此处理pop点击事件，index为点击区域索引,点击区域最多可有三个
-
-			}
-		});
-		mPopView.setVisibility(View.GONE);
-		mMapView.addView(mPopView);
 
 	}
 
@@ -101,24 +99,26 @@ public class Location extends Activity {
 			int intExtra = intent.getIntExtra(
 					PersonConstant.LOCATION_CHANGE_TAG, 0);
 			if (PersonConstant.LOCATION_CHANGE == intExtra) {
-				mMapView.getOverlays().clear();
-				// mMapView.removeAllViews();
-				Log.i("onReceive", "刷新地图");
-				OverItemS ov = new OverItemS(getResources().getDrawable(
-						R.drawable.gplaces), mMapView);
-				mMapView.getOverlays().add(ov);
+	            myLocationOverlay.setData(PersonIntence.getLocData());
+	            mMapView.refresh();
+				// mMapView.getOverlays().clear();
+				// // mMapView.removeAllViews();
+				// Log.i("onReceive", "刷新地图");
+				// OverItemS ov = new OverItemS(getResources().getDrawable(
+				// R.drawable.gplaces), mMapView);
+				// mMapView.getOverlays().add(ov);
+				//
+				// Drawable endmarker = getResources().getDrawable(
+				// R.drawable.gplaces);
+				// OverlayItem enditem = new
+				// OverlayItem(PersonIntence.getPoint(),
+				// "item3", PersonIntence.getAddr());
+				// enditem.setMarker(endmarker);
+				// ov.addItem(enditem);
+				// mMapController.setCenter(PersonIntence.getPoint());//
+				// mMapController.setZoom(19);// 设置地图zoom级别
+				// mMapView.refresh();// 刷新地图
 
-				Drawable endmarker = getResources().getDrawable(
-						R.drawable.gplaces);
-				OverlayItem enditem = new OverlayItem(PersonIntence.getPoint(),
-						"item3", PersonIntence.getAddr());
-				enditem.setMarker(endmarker);
-
-				ov.addItem(enditem);
-
-				mMapController.setCenter(PersonIntence.getPoint());//
-				mMapController.setZoom(19);// 设置地图zoom级别
-				mMapView.refresh();// 刷新地图
 			}
 		}
 	}

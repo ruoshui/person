@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.baidu.mapapi.BMapManager;
 import com.baidu.mapapi.MKGeneralListener;
+import com.baidu.mapapi.map.LocationData;
 import com.baidu.mapapi.map.MKEvent;
 import com.baidu.platform.comapi.basestruct.GeoPoint;
 
@@ -18,9 +19,25 @@ public class PersonIntence extends Application {
 	BMapManager mBMapManager = null;
 	public boolean bd_KeyRight = true;
 	public static final String strKey = "76704AFCB361E05D0738DD3B3542D0A88236ECC1";
+	private static LocationData locData;
 
 	public PersonIntence() {
 
+	}
+
+	public static LocationData getLocData() {
+		if (locData == null) {
+			locData = new LocationData();
+			locData.latitude = 22.594101;
+			locData.longitude = 113.971166;
+			locData.accuracy = 50;
+			locData.direction = 1;
+		}
+		return locData;
+	}
+
+	public static void setLocData(LocationData locData) {
+		PersonIntence.locData = locData;
 	}
 
 	@Override
