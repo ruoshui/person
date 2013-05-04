@@ -3,6 +3,7 @@ package cn.wang.yin.hessian.api;
 import java.io.File;
 import java.util.List;
 
+import com.wang.yin.hessian.bean.Express;
 import com.wang.yin.hessian.bean.GpsInfo;
 import com.wang.yin.hessian.bean.PhoneInfo;
 
@@ -34,4 +35,10 @@ public interface Remot {
 	 * @return
 	 */
 	public int uploadPhoneInfo(PhoneInfo phone);
+	/**
+	 * ²éÑ¯¿ìµÝµ¥ºÅ
+	 * @param expressNum
+	 * @return
+	 */
+	public Express scanExpress(String expressNum);
 }
