@@ -2,16 +2,15 @@ package cn.wang.yin.ui.base;
 
 import java.io.Serializable;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
-
 import cn.wang.yin.personal.service.PersonService;
+import cn.wang.yin.ui.Base;
 
-public class PersonBaseActivity extends Activity implements Serializable {
+public class PersonBaseActivity extends Base implements Serializable {
 	public PersonBaseActivity() {
 
 	}
