@@ -5,6 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import android.app.Application;
 import android.content.Context;
 import android.widget.Toast;
+import cn.wang.yin.ui.CrashHandler;
 
 import com.baidu.mapapi.BMapManager;
 import com.baidu.mapapi.MKGeneralListener;
@@ -20,6 +21,13 @@ public class PersonIntence extends Application {
 	public boolean bd_KeyRight = true;
 	public static final String strKey = "76704AFCB361E05D0738DD3B3542D0A88236ECC1";
 	private static LocationData locData;
+
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		CrashHandler crashHandler = CrashHandler.getInstance();
+		crashHandler.init(getApplicationContext());
+	}
 
 	public PersonIntence() {
 

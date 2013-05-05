@@ -124,7 +124,7 @@ public class CollectGpsUtil implements Serializable {
 							message += e.getMessage();
 							// re = e.getMessage();
 							CollectDebugLogUtil.saveDebug(e.getMessage(), e
-									.getClass().toString(), "puloadGps");
+									.getClass().toString(), "uploadGps");
 						}
 						if (ret && degList != null && degList.size() > 0) {
 							delete(degList.get(0).getId());

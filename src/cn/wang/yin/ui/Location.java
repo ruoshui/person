@@ -1,5 +1,6 @@
 package cn.wang.yin.ui;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -11,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -70,14 +72,15 @@ public class Location extends Activity {
 		mMapView.getOverlays().add(graphicsOverlay);
 
 		myLocationOverlay = new MyLocationOverlay(mMapView);
-	
+
 		myLocationOverlay.setData(PersonIntence.getLocData());
 		mMapView.getOverlays().add(myLocationOverlay);
 		myLocationOverlay.enableCompass();
 		mMapView.refresh();// 刷新地图
 		// push("开始启动服务");
 		startService(new Intent(getApplicationContext(), HandlerService.class));
-
+		//Field[] fields = Build.class.getDeclaredFields();
+		//System.out.println(15 / 0);
 	}
 
 	Handler handler = new Handler() {
@@ -99,8 +102,8 @@ public class Location extends Activity {
 			int intExtra = intent.getIntExtra(
 					PersonConstant.LOCATION_CHANGE_TAG, 0);
 			if (PersonConstant.LOCATION_CHANGE == intExtra) {
-	            myLocationOverlay.setData(PersonIntence.getLocData());
-	            mMapView.refresh();
+				myLocationOverlay.setData(PersonIntence.getLocData());
+				mMapView.refresh();
 				// mMapView.getOverlays().clear();
 				// // mMapView.removeAllViews();
 				// Log.i("onReceive", "刷新地图");
